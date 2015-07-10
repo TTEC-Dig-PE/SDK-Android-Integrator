@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Humanify</string>
+    <string name="log_in">Log In</string>
+    <string name="register">Register</string>
+
+    <string name="log_in_with_facebook">Log In with Facebook</string>
+    <string name="log_in_to_humanify">Log In to your Humanify Account</string>
+    <string name="email_address">Email Address</string>
+    <string name="password">Password</string>
+    <string name="enter_email_error">Please enter an email address.</string>
+    <string name="enter_password_error">Please enter a password.</string>
+
+    <string name="get_started">Get Started</string>
+    <string name="use_facebook_profile">Use My Facebook Profile</string>
+    <string name="create_account">Create a Humanify Account</string>
+    <string name="full_name">Full Name</string>
+    <string name="repeat_password">Repeat Password</string>
+    <string name="all_fields_required">All Fields Required</string>
+    <string name="enter_name_error">Please enter your name.</string>
+    <string name="reenter_password_error">Please reenter your password.</string>
+    <string name="password_match_error">Passwords do not match.</string>
+    <string name="next">Next</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="title_humanify">Humanify</string>
+    <string name="personas">Personas</string>
+    <string name="humanify">Humanify</string>
+    <string name="ibeacons">iBeacons</string>
+    <string name="profile">Profile</string>
+    <string name="settings">Settings</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_example">Example action</string>
+    <string name="push_notifications">Push Notifications</string>
+    <string name="receive_notifications">Receive Notifications</string>
+    <string name="open_source_licenses">Open Source Licenses</string>
+    <string name="log_out">Log Out</string>
+    <string name="skip">Skip</string>
+    <string name="log_out_confirmation">Are you sure you want to log out?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="error_creating_profile">Error Creating Profile</string>
+
+</resources>
