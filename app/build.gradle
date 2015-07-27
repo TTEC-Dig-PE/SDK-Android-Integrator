@@ -40,7 +40,6 @@ android {
 }
 
 dependencies {
-    compile 'com.humanify.expertconnect:expertconnect:1.0.1@aar'
     //releaseCompile project(':app')
     //debugCompile project(path: ':expertconnect', configuration: 'debug')
     // Example of depending on artifacts, you may use `gradle install` to test.
@@ -49,6 +48,7 @@ dependencies {
     // required expertconnect dependencies
     // (there is an issue causing transitive dependencies not to work with the above)
     // https://code.google.com/p/android/issues/detail?id=80989
+    compile 'com.humanify.expertconnect:expertconnect:1.0.2@aar'
     compile 'com.android.support:appcompat-v7:22.1.1'
     compile 'com.squareup.okhttp:okhttp:2.3.0'
     compile 'com.squareup.okhttp:okhttp-ws:2.3.0'
