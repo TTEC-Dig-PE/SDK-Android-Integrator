@@ -368,7 +368,8 @@ public class NavigationDrawerFragment extends BaseExpertConnectFragment {
 
             Action action = getItem(position);
 
-            holdr.text.setText(action.getDisplayName());
+            //holdr.text.setText(action.getDisplayName());
+            holdr.text.setText(getResources().getIdentifier(action.getDisplayName(), "string", getActivity().getPackageName()));
 
             if (TextUtils.isEmpty(action.getIcon())) {
                 holdr.image.setVisibility(View.INVISIBLE);

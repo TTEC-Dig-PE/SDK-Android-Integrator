@@ -24,6 +24,9 @@
     <string name="next">Next</string>
 
     <string name="action_settings">Settings</string>
+    <string name="action_personas">Personas</string>
+    <string name="action_humanify">Humanify</string>
+    <string name="action_profile">Profile</string>
     <string name="title_humanify">Humanify</string>
     <string name="personas">Personas</string>
     <string name="humanify">Humanify</string>

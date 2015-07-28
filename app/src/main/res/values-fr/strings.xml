@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Humanify</string>
+    <string name="log_in">Se Connecter</string>
+    <string name="register">Enregistre</string>
+
+    <string name="log_in_with_facebook">Se Connecter avec Facebook</string>
+    <string name="log_in_to_humanify">Connectez-vous à Votre Compte Humanify</string>
+    <string name="email_address">Adresse E-mail</string>
+    <string name="password">Mot de Passe</string>
+    <string name="enter_email_error">Entrez une adresse mail s\'il vous plaît.</string>
+    <string name="enter_password_error">S\'il vous plaît entrer un mot de passe.</string>
+
+    <string name="get_started">Commencer</string>
+    <string name="use_facebook_profile">Utiliser mon Profil Facebook</string>
+    <string name="create_account">Créer un compte Humanify</string>
+    <string name="full_name">Nom Complet</string>
+    <string name="repeat_password">Répéter le Mot de Passe</string>
+    <string name="all_fields_required">Toutes les Entrées sont Nécessaires</string>
+    <string name="enter_name_error">Veuillez entrer votre nom.</string>
+    <string name="reenter_password_error">Veuillez retaper votre mot-de-passe.</string>
+    <string name="password_match_error">Les mots de passe ne correspondent pas.</string>
+    <string name="next">Suivant</string>
+
+    <string name="action_settings">Paramètres</string>
+    <string name="action_personas">Personnages</string>
+    <string name="action_humanify">Site Web de Humanify</string>
+    <string name="action_profile">Profil</string>
+    <string name="title_humanify">Humanify</string>
+    <string name="personas">Personnages</string>
+    <string name="humanify">Humanify</string>
+    <string name="profile">Profil</string>
+    <string name="settings">Paramètres</string>
+    <string name="navigation_drawer_open">Ouvrir le tiroir de navigation</string>
+    <string name="navigation_drawer_close">Fermez le tiroir de navigation</string>
+    <string name="push_notifications">Notifications Pousséss</string>
+    <string name="receive_notifications">Recevoir les Notifications</string>
+    <string name="open_source_licenses">Licences Open Source</string>
+    <string name="log_out">Se Déconnecter</string>
+    <string name="skip">Passer</string>
+    <string name="log_out_confirmation">Êtes-vous sûr que vous voulez vous déconnecter?</string>
+    <string name="yes">Oui</string>
+    <string name="no">Non</string>
+    <string name="error_creating_profile">Erreur dans la Création du Profil</string>
+</resources>

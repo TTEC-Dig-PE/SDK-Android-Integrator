@@ -1,30 +1,24 @@
 [
   {
     "type": "navigation",
-    "displayName": "Personas",
+    "displayName": "action_personas",
     "icon": "ic_nav_personas",
     "configuration": { "navigationContext": "personas" }
   },
   {
     "type": "web",
-    "displayName": "Humanify",
+    "displayName": "action_humanify",
     "icon": "ic_nav_humanify",
     "configuration": { "url": "http://www.humanify.com/" }
   },
   {
     "type": "profile",
-    "displayName": "Profile",
+    "displayName": "action_profile",
     "icon": "ic_nav_profile"
   },
   {
     "type": "settings",
-    "displayName": "Settings",
+    "displayName": "action_settings",
     "icon": "ic_nav_settings"
-  },
-  {
-    "type": "chat",
-    "displayName": "Chat",
-    "icon": "ic_nav_humanify",
-    "configuration": {"agentSkill": "todskill"}
   }
 ]

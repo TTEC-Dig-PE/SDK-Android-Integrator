@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Humanify</string>
+    <string name="log_in">Acceder</string>
+    <string name="register">Registrar</string>
+
+    <string name="log_in_with_facebook">Acceder con Facebook</string>
+    <string name="log_in_to_humanify">Accede a tu Cuenta Humanify</string>
+    <string name="email_address">Dirección de Correo Electrónico</string>
+    <string name="password">Contraseña</string>
+    <string name="enter_email_error">Por favor introduzca una dirección de correo eléctronico.</string>
+    <string name="enter_password_error">Por favor, ingrese una contraseña.</string>
+
+    <string name="get_started">Comenzar</string>
+    <string name="use_facebook_profile">Usar mi Perfil en Facebook</string>
+    <string name="create_account">Crear una Cuenta Humanify</string>
+    <string name="full_name">Nombre Completo</string>
+    <string name="repeat_password">Repita la Contraseña</string>
+    <string name="all_fields_required">Se Requiere que Todas las Entradas</string>
+    <string name="enter_name_error">Por favor, escriba su nombre.</string>
+    <string name="reenter_password_error">Por favor re ingrese su contraseña.</string>
+    <string name="password_match_error">Las contraseñas no coincide.</string>
+    <string name="next">Siguiente</string>
+
+    <string name="action_settings">Ajustes</string>
+    <string name="action_personas">Personas</string>
+    <string name="action_humanify">Página Web Humanify</string>
+    <string name="action_profile">Perfil</string>
+    <string name="title_humanify">Humanify</string>
+    <string name="personas">Personas</string>
+    <string name="humanify">Humanify</string>
+    <string name="profile">Perfil</string>
+    <string name="settings">Ajustes</string>
+    <string name="navigation_drawer_open">Abrir el cajón de navegación</string>
+    <string name="navigation_drawer_close">Cierre el cajón de navegación</string>
+    <string name="push_notifications">Notificaciones Empujados</string>
+    <string name="receive_notifications">Recibir Notificaciones</string>
+    <string name="open_source_licenses">Licencias de Código Abierto</string>
+    <string name="log_out">Cerrar Sesión</string>
+    <string name="skip">Saltarse</string>
+    <string name="log_out_confirmation">¿Seguro que quieres cerrar sesión?</string>
+    <string name="yes">Sí</string>
+    <string name="no">No</string>
+    <string name="error_creating_profile">Error en la Creación del Perfil</string>
+</resources>
