@@ -40,15 +40,8 @@ android {
 }
 
 dependencies {
-    //releaseCompile project(':app')
-    //debugCompile project(path: ':expertconnect', configuration: 'debug')
-    // Example of depending on artifacts, you may use `gradle install` to test.
-    //    releaseCompile 'com.humanify.expertconnect:expertconnect:1.0.0:release@aar'
-    //    debugCompile 'com.humanify.expertconnect:expertconnect:1.0.0:debug@aar'
-    // required expertconnect dependencies
-    // (there is an issue causing transitive dependencies not to work with the above)
-    // https://code.google.com/p/android/issues/detail?id=80989
-    compile 'com.humanify.expertconnect:expertconnect:1.0.2-debug@aar'
+    compile 'com.humanify.expertconnect:expertconnect:1.1.0-debug@aar'
+
     compile 'com.android.support:appcompat-v7:22.1.1'
     compile 'com.squareup.okhttp:okhttp:2.3.0'
     compile 'com.squareup.okhttp:okhttp-ws:2.3.0'
@@ -59,9 +52,7 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.4.0'
     compile 'com.squareup.okhttp:okhttp-urlconnection:2.3.0'
     compile 'com.github.chrisbanes.photoview:library:1.2.3'
-    // Additional sample app dependenciess
-    compile 'de.psdev.licensesdialog:licensesdialog:1.7.0'
-    compile 'com.willowtreeapps.saguaro:saguaro-android:1.0.1'
-    compile 'com.urbanairship:urbanairship-lib:6.0.0@aar'
+
+    // Additional sample app dependencies
     compile 'com.google.android.gms:play-services-base:7.3.0'
 }

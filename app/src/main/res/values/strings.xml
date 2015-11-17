@@ -2,6 +2,7 @@
 <resources>
 
     <string name="app_name">Humanify</string>
+
     <string name="log_in">Log In</string>
     <string name="register">Register</string>
 
@@ -45,5 +46,14 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="error_creating_profile">Error Creating Profile</string>
+    <string name="title_activity_sample">SampleActivity</string>
+
+    <!-- Demo -->
+    <string name="start_chat">Start Chat</string>
+    <string name="start_answer_engine">Start Answer Engine</string>
+    <string name="start_voice_callback">Voice Callback</string>
+    <string name="start_form">Agent Performance Survey</string>
+    <string name="send_breadcrumb">Send Breadcrumb</string>
+    <string name="make_decision">Make Decision</string>
 
 </resources>
