@@ -1,39 +1,87 @@
 package com.humanify.expertconnect.sample;
 
 import android.app.Application;
+import android.net.Uri;
+import android.os.AsyncTask;
 
 import com.humanify.expertconnect.ExpertConnect;
 import com.humanify.expertconnect.ExpertConnectConfig;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
+
+import java.io.IOException;
 
 public class MainApplication extends Application {
 
-    public static final String ENDPOINT_DEV = "http://api.ce03.humanify.com";
-    static final String CLIENT_ID = "henry";
-    static final String CLIENT_SECRET = "secret123";
-
-//    public static final String ENDPOINT_DEV = "http://api.humanify.com:8080/";
-//    static final String CLIENT_ID = "mktwebextc";
-//    static final String CLIENT_SECRET = "secret123";
-
-    private String endpoint;
+    private static final String TOKEN_ENDPOINT = "http://api.ce03.humanify.com/identityDelegate/v1/tokens";
+    private static final String TOKEN = "22e89580-a307-4e90-827d-2cae1009112e";
+    private static final String ENDPOINT_DEV = "http://api.ce03.humanify.com";
+    private static final String CLIENT_ID = "henry";
+    private static final String CLIENT_SECRET = "secret123";
 
     @Override
     public void onCreate() {
         super.onCreate();
 
-        endpoint = ENDPOINT_DEV;
-        setEndpoint(endpoint);
+        // hard coded token
+        // configureWithUserToken(TOKEN);
+
+        // default auth server
+        configureWithDefaultAuthServer();
+
+        // identity delegate server
+        // new RetrieveUserIdentityTokenTask().execute();
     }
 
-    public String getEndpoint() {
-        return endpoint;
+    private void configureWithUserToken(String userToken) {
+        ExpertConnectConfig expertConnectConfig = new ExpertConnectConfig()
+                .setMainNavigationClass(SampleActivity.class)
+                .setEndpoint(ENDPOINT_DEV)
+                .setUserIdentityToken(userToken);
+        ExpertConnect.getInstance(this).setConfig(expertConnectConfig);
     }
 
-    public void setEndpoint(String endpoint) {
-        this.endpoint = endpoint;
+    public void configureWithDefaultAuthServer() {
         ExpertConnect.getInstance(this).setConfig(new ExpertConnectConfig()
                 .setMainNavigationClass(SampleActivity.class)
-                .setEndpoint(endpoint)
+                .setEndpoint(ENDPOINT_DEV)
                 .setCredentials(MainApplication.CLIENT_ID, MainApplication.CLIENT_SECRET));
+    }
+
+    private class RetrieveUserIdentityTokenTask extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            String newAuthUrl = Uri.parse(TOKEN_ENDPOINT).buildUpon()
+                    .appendQueryParameter("username", "f")
+                    .toString();
+
+            Request newAuthRequest = new Request.Builder()
+                    .url(newAuthUrl)
+                    .get()
+                    .build();
+
+            try {
+                OkHttpClient client = new OkHttpClient();
+
+                Response newAuthResponse = client.newCall(newAuthRequest).execute();
+                if (newAuthResponse.isSuccessful()) {
+                    String userToken = newAuthResponse.body().string();
+                    return userToken;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String userToken) {
+            if (userToken == null) {
+                configureWithDefaultAuthServer();
+            } else {
+                configureWithUserToken(userToken);
+            }
+        }
     }
 }

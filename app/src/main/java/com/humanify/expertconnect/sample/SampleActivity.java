@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -67,7 +68,7 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
     public void onStart() {
         super.onStart();
 
-        // register receiver
+        // register decision receiver
         api.registerPostDecisionData(decisionReceiver);
     }
 
@@ -75,7 +76,7 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
     public void onStop() {
         super.onStop();
 
-        // unregister receiver
+        // unregister decision receiver
         api.unregister(decisionReceiver);
     }
 
@@ -101,7 +102,7 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
 
     @Override
     public void onSendBreadcrumbClick(MaterialButton startForm) {
-
+        Toast.makeText(this, "Coming soon!", Toast.LENGTH_LONG).show();
     }
 
     @Override
