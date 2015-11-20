@@ -16,7 +16,7 @@ public class MainApplication extends Application {
 
     private static final String TOKEN_ENDPOINT = "http://api.ce03.humanify.com/identityDelegate/v1/tokens";
     private static final String TOKEN = "22e89580-a307-4e90-827d-2cae1009112e";
-    private static final String ENDPOINT_DEV = "http://api.ce03.humanify.com";
+    private static final String API_ENDPOINT = "http://api.ce03.humanify.com";
     private static final String CLIENT_ID = "henry";
     private static final String CLIENT_SECRET = "secret123";
 
@@ -35,17 +35,16 @@ public class MainApplication extends Application {
     }
 
     private void configureWithUserToken(String userToken) {
-        ExpertConnectConfig expertConnectConfig = new ExpertConnectConfig()
+        ExpertConnect.getInstance(this).setConfig(new ExpertConnectConfig()
                 .setMainNavigationClass(SampleActivity.class)
-                .setEndpoint(ENDPOINT_DEV)
-                .setUserIdentityToken(userToken);
-        ExpertConnect.getInstance(this).setConfig(expertConnectConfig);
+                .setEndpoint(API_ENDPOINT)
+                .setUserIdentityToken(userToken));
     }
 
     public void configureWithDefaultAuthServer() {
         ExpertConnect.getInstance(this).setConfig(new ExpertConnectConfig()
                 .setMainNavigationClass(SampleActivity.class)
-                .setEndpoint(ENDPOINT_DEV)
+                .setEndpoint(API_ENDPOINT)
                 .setCredentials(MainApplication.CLIENT_ID, MainApplication.CLIENT_SECRET));
     }
 
