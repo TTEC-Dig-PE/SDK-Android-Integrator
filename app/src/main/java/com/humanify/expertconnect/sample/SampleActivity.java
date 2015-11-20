@@ -180,9 +180,6 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
 
     private void handleAllNotifications(ExpertConnectNotification notification) {
         switch (notification.getType()){
-            case ExpertConnectNotification.TYPE_AGENT_AVAILABILITY_INFO_UPDATED:
-                handleAgentAvailabilityNotification(notification);
-                break;
             case ExpertConnectNotification.TYPE_CHAT_ENDED:
                 handleChatEnd(notification);
                 break;
@@ -200,14 +197,5 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
     private void handleChatEnd(ExpertConnectNotification notification) {
         String message = "Chat ended with reason - "+notification.getMessage();
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-    }
-
-    private void handleAgentAvailabilityNotification(ExpertConnectNotification notification) {
-        String skill = notification.getMessage();
-        final ExpertConnectApiProxy api = ExpertConnectApiProxy.getInstance(this);
-
-        Bundle args = new Bundle();
-        args.putString("skill", skill);
-        Toast.makeText(this, skill, Toast.LENGTH_LONG).show();
     }
 }
