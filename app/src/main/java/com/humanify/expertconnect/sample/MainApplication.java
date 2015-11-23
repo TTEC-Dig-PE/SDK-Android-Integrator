@@ -17,8 +17,9 @@ public class MainApplication extends Application {
     private static final String TOKEN_ENDPOINT = "http://api.ce03.humanify.com/identityDelegate/v1/tokens";
     private static final String TOKEN = "22e89580-a307-4e90-827d-2cae1009112e";
     private static final String API_ENDPOINT = "http://api.ce03.humanify.com";
-    private static final String CLIENT_ID = "henry";
+
     private static final String CLIENT_SECRET = "secret123";
+    public static final String CLIENT_ID = "henry";
 
     @Override
     public void onCreate() {

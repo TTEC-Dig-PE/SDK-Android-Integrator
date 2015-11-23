@@ -15,10 +15,14 @@ import com.humanify.expertconnect.ExpertConnect;
 import com.humanify.expertconnect.api.ApiBroadcastReceiver;
 import com.humanify.expertconnect.api.ApiException;
 import com.humanify.expertconnect.api.ExpertConnectApiProxy;
+import com.humanify.expertconnect.api.IdentityManager;
 import com.humanify.expertconnect.api.model.AgentAvailabilityResponse;
 import com.humanify.expertconnect.api.model.ExpertConnectNotification;
+import com.humanify.expertconnect.api.model.JourneyResponse;
 import com.humanify.expertconnect.api.model.ParcelableMap;
 import com.humanify.expertconnect.api.model.SkillStatus;
+import com.humanify.expertconnect.api.model.breadcrumbs.BreadcrumbsAction;
+import com.humanify.expertconnect.api.model.breadcrumbs.BreadcrumbsSession;
 import com.humanify.expertconnect.sample.holdr.Holdr_ActivitySample;
 import com.humanify.expertconnect.util.ApiResult;
 import com.humanify.expertconnect.view.compat.MaterialButton;
@@ -67,6 +71,70 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
         @Override
         public void onError(Context context, ApiException error) {
 
+        }
+    };
+
+    ApiBroadcastReceiver<JourneyResponse> journeyReceiver = new ApiBroadcastReceiver<JourneyResponse>() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            super.onReceive(context, intent);
+        }
+
+        @Override
+        public void onSuccess(Context context, JourneyResponse result) {
+            IdentityManager identityManager = ExpertConnect.getInstance(context).getIdentityManager();
+            String journeyId = result.getId();
+            identityManager.setJourneyId(journeyId);
+            ExpertConnect.getInstance(context).setOraganization(MainApplication.CLIENT_ID);
+            breadcrumbsSession(context);
+        }
+
+        @Override
+        public void onError(Context context, ApiException error) {
+            Toast.makeText(context, error.getUserMessage(getResources()), Toast.LENGTH_SHORT).show();
+        }
+    };
+
+    ApiBroadcastReceiver<BreadcrumbsSession> breadcrumbsSessionReceiver = new ApiBroadcastReceiver<BreadcrumbsSession>() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            super.onReceive(context, intent);
+        }
+
+        @Override
+        public void onSuccess(Context context, BreadcrumbsSession result) {
+            expertConnect.setBreadcrumbsSessionId(result.getSessionId());
+
+            breadcrumbsAction(context,
+                    "Initialize",
+                    "Application Journey Initialization",
+                    "CreateJourney",
+                    "NA");
+        }
+
+        @Override
+        public void onError(Context context, ApiException error) {
+            Toast.makeText(context, error.getUserMessage(getResources()), Toast.LENGTH_SHORT).show();
+        }
+    };
+
+    ApiBroadcastReceiver<BreadcrumbsAction> breadcrumbsActionReceiver = new ApiBroadcastReceiver<BreadcrumbsAction>() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            super.onReceive(context, intent);
+        }
+
+        @Override
+        public void onSuccess(Context context, BreadcrumbsAction result) {
+            String responseData =  "Breadcrumb Action Sent\n" + new Gson().toJson(result) + "\n";
+            holdr.message.setText(responseData);
+        }
+
+        @Override
+        public void onError(Context context, ApiException error) {
+            Toast.makeText(context, error.getUserMessage(getResources()), Toast.LENGTH_SHORT).show();
         }
     };
 
@@ -125,22 +193,36 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+
+        if (ExpertConnect.getInstance(this).getIdentityManager().getJourneyId() == null) {
+            api.createJourney("{}");
+        }
+    }
+
+    @Override
     public void onStart() {
         super.onStart();
 
-        // register decision receiver
+        // register
         api.registerPostDecisionData(decisionReceiver);
-
         api.registerForSDKNotifications(notificationReceiver);
+        api.registerCreateJourney(journeyReceiver);
+        api.registerBreadcrumbsSession(breadcrumbsSessionReceiver);
+        api.registerBreadcrumbsAction(breadcrumbsActionReceiver);
     }
 
     @Override
     public void onStop() {
         super.onStop();
 
-        // unregister decision receiver
+        // unregister
         api.unregister(decisionReceiver);
         api.unregister(notificationReceiver);
+        api.unregister(journeyReceiver);
+        api.unregister(breadcrumbsSessionReceiver);
+        api.unregister(breadcrumbsActionReceiver);
     }
 
     @Override
@@ -163,9 +245,19 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
         api.startInterviewForms(DEMO_FORM);
     }
 
+    private static int interactionsCount = 0;
     @Override
     public void onSendBreadcrumbClick(MaterialButton startForm) {
-        Toast.makeText(this, "Coming soon!", Toast.LENGTH_LONG).show();
+        if (expertConnect.getBreadcrumbsSessionId() != null) {
+            interactionsCount++;
+            breadcrumbsAction(this,
+                    "User interaction count",
+                    Integer.toString(interactionsCount),
+                    "HumanifyDemo-SampleActivity",
+                    "NA");
+        } else {
+            Toast.makeText(this, "Breadcrumb Session is not created", Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
@@ -197,5 +289,50 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
     private void handleChatEnd(ExpertConnectNotification notification) {
         String message = "Chat ended with reason - "+notification.getMessage();
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+    }
+
+    private void breadcrumbsSession(Context context) {
+
+        if(expertConnect.getIdentityManager().getJourneyId() == null)
+            return;
+
+        BreadcrumbsSession breadcrumbsSession = new BreadcrumbsSession();
+
+        breadcrumbsSession.setJourneyId(expertConnect.getIdentityManager().getJourneyId());
+        breadcrumbsSession.setTenantId(expertConnect.getOrganization());
+        breadcrumbsSession.setPlatform("Android");
+        breadcrumbsSession.setModel("Model");
+        breadcrumbsSession.setDeviceId("deviceId");
+        breadcrumbsSession.setPhoneNumber("phone number");
+        breadcrumbsSession.setOsVersion("osVersion");
+        breadcrumbsSession.setIpAddress("ipAddress");
+        breadcrumbsSession.setGeoLocation("geoLocation");
+        breadcrumbsSession.setBrowserType("NA");
+        breadcrumbsSession.setBrowserVersion("NA");
+        breadcrumbsSession.setResolution("resolution");
+
+        api.breadcrumbsSession(breadcrumbsSession);
+    }
+
+    private void breadcrumbsAction(Context context,
+                                  String actionType,
+                                  String actionDescription,
+                                  String actionSource,
+                                  String actionDestination) {
+
+        if(expertConnect.getIdentityManager().getJourneyId() == null || expertConnect.getBreadcrumbsSessionId() == null)
+            return;
+
+        BreadcrumbsAction breadcrumbsAction = new BreadcrumbsAction();
+
+        breadcrumbsAction.setJourneyId(expertConnect.getIdentityManager().getJourneyId());
+        breadcrumbsAction.setSessionId(expertConnect.getBreadcrumbsSessionId());
+        breadcrumbsAction.setTenantId(expertConnect.getOrganization());
+        breadcrumbsAction.setActionType(actionType);
+        breadcrumbsAction.setActionDescription(actionDescription);
+        breadcrumbsAction.setActionSource(actionSource);
+        breadcrumbsAction.setActionDestination(actionDestination);
+
+        api.breadcrumbsAction(breadcrumbsAction);
     }
 }
