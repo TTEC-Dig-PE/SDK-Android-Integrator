@@ -40,7 +40,7 @@ android {
 }
 
 dependencies {
-    compile 'com.humanify.expertconnect:expertconnect:1.1.0-debug@aar'
+    compile 'com.humanify.expertconnect:expertconnect:1.1.0@aar'
 
     compile 'com.android.support:appcompat-v7:22.1.1'
     compile 'com.squareup.okhttp:okhttp:2.3.0'

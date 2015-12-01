@@ -21,6 +21,9 @@ public class MainApplication extends Application {
     private static final String CLIENT_SECRET = "secret123";
     public static final String CLIENT_ID = "henry";
 
+    public static final int CACHE_COUNT = 3;
+    public static final int CACHE_TIME = 30; // seconds
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -39,6 +42,8 @@ public class MainApplication extends Application {
         ExpertConnect.getInstance(this).setConfig(new ExpertConnectConfig()
                 .setMainNavigationClass(SampleActivity.class)
                 .setEndpoint(API_ENDPOINT)
+                .setCacheCount(CACHE_COUNT)
+                .setCacheTime(CACHE_TIME)
                 .setUserIdentityToken(userToken));
     }
 
@@ -46,6 +51,8 @@ public class MainApplication extends Application {
         ExpertConnect.getInstance(this).setConfig(new ExpertConnectConfig()
                 .setMainNavigationClass(SampleActivity.class)
                 .setEndpoint(API_ENDPOINT)
+                .setCacheCount(CACHE_COUNT)
+                .setCacheTime(CACHE_TIME)
                 .setCredentials(MainApplication.CLIENT_ID, MainApplication.CLIENT_SECRET));
     }
 
