@@ -11,6 +11,9 @@
         <item name="expertconnect_theme">@style/AppTheme.ExpertConnect</item>
     </style>
 
+    <style name="AppTheme.ExpertConnect" parent="BaseAppTheme.ExpertConnect">
+    </style>
+
     <style name="BaseAppTheme.ExpertConnect" parent="ExpertConnect.Theme.Light.DarkActionBar">
         <item name="android:buttonStyle">@style/AppStyle.Button</item>
         <item name="colorAccent">@color/blue</item>
@@ -59,9 +62,6 @@
     </style>
 
     <style name="AppTheme.Main" parent="AppTheme.BaseMain">
-    </style>
-
-    <style name="AppTheme.ExpertConnect" parent="BaseAppTheme.ExpertConnect">
     </style>
 
     <style name="AppStyle"/>

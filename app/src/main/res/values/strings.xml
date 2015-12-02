@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Humanify</string>
+    <string name="app_name">Humanify Demo</string>
 
     <string name="log_in">Log In</string>
     <string name="register">Register</string>
