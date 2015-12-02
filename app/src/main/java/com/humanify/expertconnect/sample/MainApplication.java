@@ -28,6 +28,7 @@ public class MainApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
+        long time = System.currentTimeMillis();
         // hard coded token
         // configureWithUserToken(TOKEN);
 
@@ -36,6 +37,7 @@ public class MainApplication extends Application {
 
         // identity delegate server
         // new RetrieveUserIdentityTokenTask().execute();
+        System.out.println("Initialization Time = " + (System.currentTimeMillis() - time));
     }
 
     private void configureWithUserToken(String userToken) {
