@@ -10,12 +10,7 @@
     <style name="AppTheme.Main" parent="AppTheme.BaseMain">
         <item name="android:statusBarColor">@color/translucent_statusbar_background</item>
     </style>
-<!--
-    <style name="AppTheme.ExpertConnect" parent="BaseAppTheme.ExpertConnect">
-        <item name="android:colorButtonNormal">@color/blue</item>
-        <item name="android:colorControlActivated">@color/blue</item>
-    </style>
--->
+
     <style name="AppStyle.ButtonBase" parent="android:Widget.Material.Button">
     </style>
 
