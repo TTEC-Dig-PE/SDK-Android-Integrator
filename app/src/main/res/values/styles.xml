@@ -9,19 +9,22 @@
         <item name="colorControlActivated">@color/blue</item>
         <item name="android:buttonStyle">@style/AppStyle.Button</item>
         <item name="android:windowBackground">@color/light_gray</item>
+
+        <item name="expertconnect_theme">@style/AppTheme.ExpertConnect</item>
+
+
+    </style>
+
+    <style name="BaseAppTheme.ExpertConnect" parent="ExpertConnect.Theme.Light.DarkActionBar">
+        <item name="android:buttonStyle">@style/AppStyle.Button</item>
+        <item name="colorAccent">@color/blue</item>
+        <item name="colorButtonNormal">@color/blue</item>
+
+        <item name="expertconnect_chatShowAvatar">false</item>
     </style>
 
     <!-- ExpertConnect Theme. -->
-    <style name="AppTheme.ExpertConnect" parent="ExpertConnect.Theme.Light.DarkActionBar">
-        <item name="colorPrimary">@color/blue</item>
-        <item name="colorPrimaryDark">@color/blue_dark</item>
-        <item name="colorAccent">@color/blue</item>
-        <item name="colorButtonNormal">@color/blue</item>
-        <item name="colorControlActivated">@color/blue</item>
-        <item name="android:buttonStyle">@style/AppStyle.Button</item>
-        <item name="android:buttonBarButtonStyle">@style/AppStyle.Button</item>
-        <item name="android:windowBackground">@color/light_gray</item>
-    </style>
+    <style name="AppTheme.ExpertConnect" parent="BaseAppTheme.ExpertConnect" />
     <!---->
 
     <!-- Alternative dark theme -->
@@ -52,10 +55,7 @@
     <!---->
 
     <!-- Application Theme -->
-    <style name="AppTheme" parent="BaseAppTheme">
-        <item name="expertconnect_theme">@style/AppTheme.ExpertConnect</item>
-        <item name="expertconnect_chatShowAvatar">false</item>
-    </style>
+    <style name="AppTheme" parent="BaseAppTheme" />
 
     <style name="AppTheme.BaseMain" parent="AppTheme">
         <!-- uses custom toolbar -->
