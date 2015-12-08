@@ -12,19 +12,33 @@
 
         <item name="expertconnect_theme">@style/AppTheme.ExpertConnect</item>
 
-
+        <!-- ExpertConnect Custom Attributes -->
+        <item name="expertconnect_chatShowAvatar">false</item>
+        <!-- ExpertConnect Custom Attributes -->
+        
     </style>
 
     <style name="BaseAppTheme.ExpertConnect" parent="ExpertConnect.Theme.Light.DarkActionBar">
         <item name="android:buttonStyle">@style/AppStyle.Button</item>
         <item name="colorAccent">@color/blue</item>
         <item name="colorButtonNormal">@color/blue</item>
-
-        <item name="expertconnect_chatShowAvatar">false</item>
     </style>
 
     <!-- ExpertConnect Theme. -->
     <style name="AppTheme.ExpertConnect" parent="BaseAppTheme.ExpertConnect" />
+
+
+    <!-- ExpertConnect Custom Styles -->
+    <style name="ExpertConnect.TextAppearance.ChatAgent" parent="ExpertConnect.TextAppearance.BaseChatAgent" >
+        <item name="android:textColor">@color/dark_gray</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="ExpertConnect.TextAppearance.ChatClient" parent="ExpertConnect.TextAppearance.BaseChatClient" >
+        <item name="android:textStyle">italic</item>
+    </style>
+    <!-- ExpertConnect Custom Styles -->
+
     <!---->
 
     <!-- Alternative dark theme -->
