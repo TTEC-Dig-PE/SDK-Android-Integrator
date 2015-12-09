@@ -10,4 +10,9 @@
     <color name="red_dark">#b71c1c</color>
     <color name="yellow">#ffeb3b</color>
     <color name="translucent_statusbar_background">#cc2086a2</color>
+
+    <!-- ExpertConnect Custom Colors -->
+    <color name="expertconnect_color_chat_client">@color/blue_dark</color>
+    <color name="expertconnect_color_chat_agent">@color/blue</color>
+    <!-- ExpertConnect Custom Colors -->
 </resources>

@@ -15,7 +15,7 @@
         <!-- ExpertConnect Custom Attributes -->
         <item name="expertconnect_chatShowAvatar">false</item>
         <!-- ExpertConnect Custom Attributes -->
-        
+
     </style>
 
     <style name="BaseAppTheme.ExpertConnect" parent="ExpertConnect.Theme.Light.DarkActionBar">
@@ -27,45 +27,26 @@
     <!-- ExpertConnect Theme. -->
     <style name="AppTheme.ExpertConnect" parent="BaseAppTheme.ExpertConnect" />
 
-
     <!-- ExpertConnect Custom Styles -->
     <style name="ExpertConnect.TextAppearance.ChatAgent" parent="ExpertConnect.TextAppearance.BaseChatAgent" >
         <item name="android:textColor">@color/dark_gray</item>
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="ExpertConnect.ChatAgent" parent="ExpertConnect.BaseChatAgent" >
+        <item name="android:background">@drawable/chat_agent_background</item>
+        <item name="android:layout_marginRight">36dp</item>
+    </style>
+
     <style name="ExpertConnect.TextAppearance.ChatClient" parent="ExpertConnect.TextAppearance.BaseChatClient" >
         <item name="android:textStyle">italic</item>
     </style>
+    <style name="ExpertConnect.ChatClient" parent="ExpertConnect.BaseChatClient" >
+        <item name="android:background">@drawable/chat_client_background</item>
+        <item name="android:layout_marginLeft">36dp</item>
+    </style>
     <!-- ExpertConnect Custom Styles -->
 
-    <!---->
-
-    <!-- Alternative dark theme -->
-    <!-- Base Application Theme. -->
-    <!--
-    <style name="BaseAppTheme" parent="Theme.AppCompat">
-        <item name="colorPrimary">@color/red</item>
-        <item name="colorPrimaryDark">@color/red_dark</item>
-        <item name="colorAccent">@color/yellow</item>
-        <item name="colorButtonNormal">@color/red</item>
-        <item name="colorControlActivated">@color/red</item>
-        <item name="android:buttonStyle">@style/AppStyle.Button</item>
-        <item name="android:windowBackground">@color/dark_gray</item>
-    </style>
-    -->
-    <!-- ExpertConnect Theme. -->
-    <!--
-    <style name="AppTheme.ExpertConnect" parent="ExpertConnect.Theme.Light.DarkActionBar">
-        <item name="colorPrimary">@color/red</item>
-        <item name="colorPrimaryDark">@color/red_dark</item>
-        <item name="colorAccent">@color/yellow</item>
-        <item name="colorButtonNormal">@color/red</item>
-        <item name="colorControlActivated">@color/red</item>
-        <item name="android:buttonStyle">@style/AppStyle.Button</item>
-        <item name="android:windowBackground">@color/dark_gray</item>
-    </style>
-    -->
     <!---->
 
     <!-- Application Theme -->
