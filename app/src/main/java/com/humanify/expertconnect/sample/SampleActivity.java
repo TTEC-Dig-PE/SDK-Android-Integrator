@@ -41,6 +41,8 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
     private ExpertConnectApiProxy api;
     private ExpertConnect expertConnect;
 
+    private int noAnswerCount = 0;
+    private static final int MAX_NO_ANSWER_COUNT = 2;
 
     private ApiBroadcastReceiver<ParcelableMap> decisionReceiver = new ApiBroadcastReceiver<ParcelableMap>(){
 
@@ -190,6 +192,14 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
         Bundle args = new Bundle();
         args.putString("skill", DEMO_SKILL);
         getSupportLoaderManager().initLoader(1, args, agentAvailabilityLoader);
+
+        api.registerForSDKNotifications(notificationReceiver);
+    }
+
+    @Override
+    protected void onDestroy() {
+        api.unregister(notificationReceiver);
+        super.onDestroy();
     }
 
     @Override
@@ -207,7 +217,6 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
 
         // register
         api.registerPostDecisionData(decisionReceiver);
-        api.registerForSDKNotifications(notificationReceiver);
         api.registerCreateJourney(journeyReceiver);
         api.registerBreadcrumbsSession(breadcrumbsSessionReceiver);
         api.registerBreadcrumbsAction(breadcrumbsActionReceiver);
@@ -219,7 +228,6 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
 
         // unregister
         api.unregister(decisionReceiver);
-        api.unregister(notificationReceiver);
         api.unregister(journeyReceiver);
         api.unregister(breadcrumbsSessionReceiver);
         api.unregister(breadcrumbsActionReceiver);
@@ -278,6 +286,9 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
             case ExpertConnectNotification.TYPE_CALLBACK_ENDED:
                 handleCallbackEnd(notification);
                 break;
+            case ExpertConnectNotification.TYPE_ANSWER_ENGINE_NO_ANSWER:
+                handleNoAnswer(notification);
+                break;
         }
     }
 
@@ -289,6 +300,16 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
     private void handleChatEnd(ExpertConnectNotification notification) {
         String message = "Chat ended with reason - "+notification.getMessage();
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+    }
+
+    private void handleNoAnswer(ExpertConnectNotification notification) {
+        noAnswerCount++;
+        if ( (noAnswerCount%MAX_NO_ANSWER_COUNT) == 0) {
+            ExpertConnectApiProxy.
+                getInstance(getApplicationContext())
+                .sendNotification(new ExpertConnectNotification(
+                    ExpertConnectNotification.TYPE_WORKFLOW_ESCLATE_TO_CHAT, DEMO_SKILL));
+        }
     }
 
     private void breadcrumbsSession(Context context) {
