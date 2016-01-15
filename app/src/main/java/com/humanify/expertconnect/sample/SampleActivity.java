@@ -1,11 +1,14 @@
 package com.humanify.expertconnect.sample;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -87,7 +90,7 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
             IdentityManager identityManager = ExpertConnect.getInstance(context).getIdentityManager();
             String journeyId = result.getId();
             identityManager.setJourneyId(journeyId);
-            ExpertConnect.getInstance(context).setOraganization(MainApplication.CLIENT_ID);
+            ExpertConnect.getInstance(context).setOraganization(result.getOrganization());
             breadcrumbsSession(context);
         }
 
@@ -172,14 +175,20 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
         }
     };
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sample);
-
         api = ExpertConnectApiProxy.getInstance(this);
         expertConnect = ExpertConnect.getInstance(this);
 
+        if (TextUtils.isEmpty(MainApplication.TOKEN)) {
+            showAccessTokenMissingDialog();
+            return;
+        }
+
+        expertConnect = ExpertConnect.getInstance(this);
         expertConnect.setUserId(USER_ID);
         expertConnect.setUserName(USER_NAME);
 
@@ -200,15 +209,6 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
     protected void onDestroy() {
         api.unregister(notificationReceiver);
         super.onDestroy();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        if (ExpertConnect.getInstance(this).getIdentityManager().getJourneyId() == null) {
-            api.createJourney("{}");
-        }
     }
 
     @Override
@@ -355,5 +355,17 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
         breadcrumbsAction.setActionDestination(actionDestination);
 
         api.breadcrumbsAction(breadcrumbsAction);
+    }
+
+    private void showAccessTokenMissingDialog() {
+        new AlertDialog.Builder(this)
+            .setMessage("Set your access token in source code")
+            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            })
+            .show();
     }
 }

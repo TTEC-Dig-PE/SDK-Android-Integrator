@@ -3,6 +3,7 @@ package com.humanify.expertconnect.sample;
 import android.app.Application;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.text.TextUtils;
 
 import com.humanify.expertconnect.ExpertConnect;
 import com.humanify.expertconnect.ExpertConnectConfig;
@@ -14,13 +15,12 @@ import java.io.IOException;
 
 public class MainApplication extends Application {
 
-    private static final String TOKEN_ENDPOINT = "http://api.ce03.humanify.com/identityDelegate/v1/tokens";
-    private static final String TOKEN = "22e89580-a307-4e90-827d-2cae1009112e";
-    private static final String API_ENDPOINT = "http://api.ce03.humanify.com";
+    public static final String TOKEN_ENDPOINT = "http://api.ce03.humanify.com/identityDelegate/v1/tokens";
 
-    private static final String CLIENT_SECRET = "secret123";
-    public static final String CLIENT_ID = "henry";
+    public static final String API_ENDPOINT = "http://api.ce03.humanify.com";
+    public static final String TOKEN = ""; // YOUR TOKEN GOES HERE
 
+    // breadcrumb configuration
     public static final int CACHE_COUNT = 3;
     public static final int CACHE_TIME = 30; // seconds
 
@@ -28,34 +28,22 @@ public class MainApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        long time = System.currentTimeMillis();
         // hard coded token
-        // configureWithUserToken(TOKEN);
-
-        // default auth server
-        configureWithDefaultAuthServer();
+        configureWithUserToken(TOKEN);
 
         // identity delegate server
         // new RetrieveUserIdentityTokenTask().execute();
-        System.out.println("Initialization Time = " + (System.currentTimeMillis() - time));
     }
 
     private void configureWithUserToken(String userToken) {
-        ExpertConnect.getInstance(this).setConfig(new ExpertConnectConfig()
-                .setMainNavigationClass(SampleActivity.class)
-                .setEndpoint(API_ENDPOINT)
-                .setCacheCount(CACHE_COUNT)
-                .setCacheTime(CACHE_TIME)
-                .setUserIdentityToken(userToken));
-    }
-
-    public void configureWithDefaultAuthServer() {
-        ExpertConnect.getInstance(this).setConfig(new ExpertConnectConfig()
-                .setMainNavigationClass(SampleActivity.class)
-                .setEndpoint(API_ENDPOINT)
-                .setCacheCount(CACHE_COUNT)
-                .setCacheTime(CACHE_TIME)
-                .setCredentials(MainApplication.CLIENT_ID, MainApplication.CLIENT_SECRET));
+        if (!TextUtils.isEmpty(userToken)) {
+            ExpertConnect.getInstance(this).setConfig(new ExpertConnectConfig()
+                    .setMainNavigationClass(SampleActivity.class)
+                    .setEndpoint(API_ENDPOINT)
+                    .setCacheCount(CACHE_COUNT)
+                    .setCacheTime(CACHE_TIME)
+                    .setUserIdentityToken(userToken));
+        }
     }
 
     private class RetrieveUserIdentityTokenTask extends AsyncTask<String, Void, String> {
@@ -86,11 +74,7 @@ public class MainApplication extends Application {
 
         @Override
         protected void onPostExecute(String userToken) {
-            if (userToken == null) {
-                configureWithDefaultAuthServer();
-            } else {
-                configureWithUserToken(userToken);
-            }
+            configureWithUserToken(userToken);
         }
     }
 }
