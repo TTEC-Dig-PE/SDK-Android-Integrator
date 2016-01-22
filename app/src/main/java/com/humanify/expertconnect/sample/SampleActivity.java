@@ -26,6 +26,7 @@ import com.humanify.expertconnect.api.model.ParcelableMap;
 import com.humanify.expertconnect.api.model.SkillStatus;
 import com.humanify.expertconnect.api.model.breadcrumbs.BreadcrumbsAction;
 import com.humanify.expertconnect.api.model.breadcrumbs.BreadcrumbsSession;
+import com.humanify.expertconnect.api.model.conversationengine.ConversationEvent;
 import com.humanify.expertconnect.sample.holdr.Holdr_ActivitySample;
 import com.humanify.expertconnect.util.ApiResult;
 import com.humanify.expertconnect.view.compat.MaterialButton;
@@ -188,7 +189,6 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
             return;
         }
 
-        expertConnect = ExpertConnect.getInstance(this);
         expertConnect.setUserId(USER_ID);
         expertConnect.setUserName(USER_NAME);
 
@@ -203,11 +203,14 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
         getSupportLoaderManager().initLoader(1, args, agentAvailabilityLoader);
 
         api.registerForSDKNotifications(notificationReceiver);
+
+        registerConversation();
     }
 
     @Override
     protected void onDestroy() {
         api.unregister(notificationReceiver);
+        unregisterConversation();
         super.onDestroy();
     }
 
@@ -283,6 +286,12 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
             case ExpertConnectNotification.TYPE_CHAT_ENDED:
                 handleChatEnd(notification);
                 break;
+            case ExpertConnectNotification.TYPE_CHAT_OPEN_FAILED:
+                handleChatOpenFailed(notification);
+                break;
+            case ExpertConnectNotification.TYPE_CHAT_LEFT_WITHOUT_ENDING:
+                handleChatLeftWithoutEnding(notification);
+                break;
             case ExpertConnectNotification.TYPE_CALLBACK_ENDED:
                 handleCallbackEnd(notification);
                 break;
@@ -298,8 +307,7 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
     }
 
     private void handleChatEnd(ExpertConnectNotification notification) {
-        String message = "Chat ended with reason - "+notification.getMessage();
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+        holdr.startChat.setText(R.string.start_chat);
     }
 
     private void handleNoAnswer(ExpertConnectNotification notification) {
@@ -309,6 +317,17 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
                 getInstance(getApplicationContext())
                 .sendNotification(new ExpertConnectNotification(
                     ExpertConnectNotification.TYPE_WORKFLOW_ESCLATE_TO_CHAT, DEMO_SKILL));
+        }
+    }
+
+    private void handleChatOpenFailed(ExpertConnectNotification notification) {
+        String message = notification.getMessage();
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+    }
+
+    private void handleChatLeftWithoutEnding(ExpertConnectNotification notification) {
+        if(expertConnect.isChatActive()) {
+            holdr.startChat.setText(R.string.continue_chat);
         }
     }
 
@@ -367,5 +386,29 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
                 }
             })
             .show();
+    }
+
+    /*
+     * Show that Host APP can receive messages while chat is active
+     */
+    ApiBroadcastReceiver<ConversationEvent> receiverConversationEvent;
+    private void unregisterConversation() {
+        ExpertConnectApiProxy.getInstance(this).unregister(receiverConversationEvent);
+    }
+    private void registerConversation() {
+        ExpertConnectApiProxy.getInstance(this)
+                .registerGetConversationEvent(receiverConversationEvent = new ApiBroadcastReceiver<ConversationEvent>() {
+                    @Override
+                    public void onSuccess(Context context, ConversationEvent result) {
+                        if (expertConnect.isChatActive()) {
+                            holdr.startChat.setText("*" + getResources().getString(R.string.continue_chat));
+                        }
+                    }
+
+                    @Override
+                    public void onError(Context context, ApiException error) {
+                        Log.d(getClass().getSimpleName(), error.getUserMessage(getResources()));
+                    }
+                });
     }
 }

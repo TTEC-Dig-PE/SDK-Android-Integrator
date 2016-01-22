@@ -50,6 +50,7 @@
 
     <!-- Demo -->
     <string name="start_chat">Start Chat</string>
+    <string name="continue_chat">Continue Chat</string>
     <string name="start_answer_engine">Start Answer Engine</string>
     <string name="start_voice_callback">Voice Callback</string>
     <string name="start_form">Agent Performance Survey</string>
