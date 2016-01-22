@@ -36,7 +36,7 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
     private static String USER_NAME = "Humanify Demo";
     private static String USER_ID = "demo@humanify.com";
 
-    private static String DEMO_ANSWER_ENGINE = "Park";
+    private static String DEMO_ANSWER_ENGINE = "All";
     private static String DEMO_SKILL = "CE_Mobile_Chat";
     private static String DEMO_FORM = "agentperformance";
 
