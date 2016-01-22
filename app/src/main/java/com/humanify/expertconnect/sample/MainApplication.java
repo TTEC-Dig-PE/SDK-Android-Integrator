@@ -18,7 +18,7 @@ public class MainApplication extends Application {
     public static final String TOKEN_ENDPOINT = "http://api.ce03.humanify.com/identityDelegate/v1/tokens";
 
     public static final String API_ENDPOINT = "http://api.ce03.humanify.com";
-    public static final String TOKEN = "22e89580-a307-4e90-827d-2cae1009112e"; // YOUR TOKEN GOES HERE
+    public static final String TOKEN = ""; // YOUR TOKEN GOES HERE
 
     // breadcrumb configuration
     public static final int CACHE_COUNT = 3;
