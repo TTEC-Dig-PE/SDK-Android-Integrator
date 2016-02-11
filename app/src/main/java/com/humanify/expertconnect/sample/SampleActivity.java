@@ -259,16 +259,12 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
     private static int interactionsCount = 0;
     @Override
     public void onSendBreadcrumbClick(MaterialButton startForm) {
-        if (expertConnect.getBreadcrumbsSessionId() != null) {
-            interactionsCount++;
-            breadcrumbsAction(this,
-                    "User interaction count",
-                    Integer.toString(interactionsCount),
-                    "HumanifyDemo-SampleActivity",
-                    "NA");
-        } else {
-            Toast.makeText(this, "Breadcrumb Session is not created", Toast.LENGTH_LONG).show();
-        }
+        interactionsCount++;
+        breadcrumbsAction(this,
+                "User interaction count",
+                Integer.toString(interactionsCount),
+                "HumanifyDemo-SampleActivity",
+                "NA");
     }
 
     @Override
@@ -336,20 +332,10 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
         if(expertConnect.getIdentityManager().getJourneyId() == null)
             return;
 
-        BreadcrumbsSession breadcrumbsSession = new BreadcrumbsSession();
+        BreadcrumbsSession breadcrumbsSession = expertConnect.newBreadcrumbsSession();
 
         breadcrumbsSession.setJourneyId(expertConnect.getIdentityManager().getJourneyId());
         breadcrumbsSession.setTenantId(expertConnect.getOrganization());
-        breadcrumbsSession.setPlatform("Android");
-        breadcrumbsSession.setModel("Model");
-        breadcrumbsSession.setDeviceId("deviceId");
-        breadcrumbsSession.setPhoneNumber("phone number");
-        breadcrumbsSession.setOsVersion("osVersion");
-        breadcrumbsSession.setIpAddress("ipAddress");
-        breadcrumbsSession.setGeoLocation("geoLocation");
-        breadcrumbsSession.setBrowserType("NA");
-        breadcrumbsSession.setBrowserVersion("NA");
-        breadcrumbsSession.setResolution("resolution");
 
         api.breadcrumbsSession(breadcrumbsSession);
     }
@@ -360,10 +346,7 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
                                   String actionSource,
                                   String actionDestination) {
 
-        if(expertConnect.getIdentityManager().getJourneyId() == null || expertConnect.getBreadcrumbsSessionId() == null)
-            return;
-
-        BreadcrumbsAction breadcrumbsAction = new BreadcrumbsAction();
+        BreadcrumbsAction breadcrumbsAction = expertConnect.newBreadcrumbsAction();
 
         breadcrumbsAction.setJourneyId(expertConnect.getIdentityManager().getJourneyId());
         breadcrumbsAction.setSessionId(expertConnect.getBreadcrumbsSessionId());
@@ -397,18 +380,18 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
     }
     private void registerConversation() {
         ExpertConnectApiProxy.getInstance(this)
-                .registerGetConversationEvent(receiverConversationEvent = new ApiBroadcastReceiver<ConversationEvent>() {
-                    @Override
-                    public void onSuccess(Context context, ConversationEvent result) {
-                        if (expertConnect.isChatActive()) {
-                            holdr.startChat.setText("*" + getResources().getString(R.string.continue_chat));
-                        }
+            .registerGetConversationEvent(receiverConversationEvent = new ApiBroadcastReceiver<ConversationEvent>() {
+                @Override
+                public void onSuccess(Context context, ConversationEvent result) {
+                    if (expertConnect.isChatActive()) {
+                        holdr.startChat.setText("*" + getResources().getString(R.string.continue_chat));
                     }
+                }
 
-                    @Override
-                    public void onError(Context context, ApiException error) {
-                        Log.d(getClass().getSimpleName(), error.getUserMessage(getResources()));
-                    }
-                });
+                @Override
+                public void onError(Context context, ApiException error) {
+                    Log.d(getClass().getSimpleName(), error.getUserMessage(getResources()));
+                }
+            });
     }
 }
