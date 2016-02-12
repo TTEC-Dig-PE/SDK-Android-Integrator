@@ -8,7 +8,6 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -184,7 +183,7 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
         api = ExpertConnectApiProxy.getInstance(this);
         expertConnect = ExpertConnect.getInstance(this);
 
-        if (TextUtils.isEmpty(MainApplication.TOKEN)) {
+        if (!expertConnect.isUserTokenProvided() && !expertConnect.isTokenProviderAvailable()) {
             showAccessTokenMissingDialog();
             return;
         }

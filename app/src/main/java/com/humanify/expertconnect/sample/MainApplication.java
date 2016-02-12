@@ -2,7 +2,6 @@ package com.humanify.expertconnect.sample;
 
 import android.app.Application;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.text.TextUtils;
 
 import com.humanify.expertconnect.ExpertConnect;
@@ -14,8 +13,9 @@ import com.squareup.okhttp.Response;
 import java.io.IOException;
 
 public class MainApplication extends Application {
-
-    public static final String TOKEN_ENDPOINT = "http://api.ce03.humanify.com/identityDelegate/v1/tokens";
+    
+    public static final String CLIENT_ID = "henry";
+    public static final String USER_ID = "Guest";
 
     public static final String API_ENDPOINT = "http://api.ce03.humanify.com";
     public static final String TOKEN = "1e189b81-499d-4714-a4cb-0fe22e2d118c"; // YOUR TOKEN GOES HERE
@@ -28,53 +28,66 @@ public class MainApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        // hard coded token
         configureWithUserToken(TOKEN);
-
-        // identity delegate server
-        // new RetrieveUserIdentityTokenTask().execute();
     }
 
     private void configureWithUserToken(String userToken) {
+        final ExpertConnect expertConnect = ExpertConnect.getInstance(this);
+        expertConnect.setClientId(MainApplication.CLIENT_ID);
+
         if (!TextUtils.isEmpty(userToken)) {
-            ExpertConnect.getInstance(this).setConfig(new ExpertConnectConfig()
+            expertConnect.setConfig(new ExpertConnectConfig()
                     .setMainNavigationClass(SampleActivity.class)
                     .setEndpoint(API_ENDPOINT)
                     .setCacheCount(CACHE_COUNT)
                     .setCacheTime(CACHE_TIME)
                     .setUserIdentityToken(userToken));
+        } else {
+            // *********************************** Token Provider ***********************************;
+//            expertConnect.setConfig(new ExpertConnectConfig()
+//                .setMainNavigationClass(SampleActivity.class)
+//                .setEndpoint(API_ENDPOINT)
+//                .setCacheCount(CACHE_COUNT)
+//                .setCacheTime(CACHE_TIME)
+//                .setTokenProvider(new ExpertConnectConfig.TokenProvider() {
+//                    @Override
+//                    public String token() {
+//                    String token = getUserSessionToken();
+//                    if (!TextUtils.isEmpty(token)) {
+//                        return token;
+//                    }
+//                    return null;
+//                    }
+//                }));
+            // *********************************** Token Provider ***********************************;
         }
     }
 
-    private class RetrieveUserIdentityTokenTask extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground(String... params) {
-            String newAuthUrl = Uri.parse(TOKEN_ENDPOINT).buildUpon()
-                    .appendQueryParameter("username", "f")
-                    .toString();
+    private String getUserSessionToken() {
+        final ExpertConnect expertConnect = ExpertConnect.getInstance(this);
+        String userId = expertConnect.getIdentityManager().getUserId();
+        String newAuthUrl = Uri.parse(expertConnect.getEndPoint()).buildUpon()
+                .appendEncodedPath("authServerProxy/v1/tokens/ust")
+                .appendQueryParameter("client_id", expertConnect.getIdentityManager().getClientId())
+                .appendQueryParameter("username", (userId == null ? USER_ID : userId))
+                .toString();
 
-            Request newAuthRequest = new Request.Builder()
-                    .url(newAuthUrl)
-                    .get()
-                    .build();
+        Request newAuthRequest = new Request.Builder()
+                .url(newAuthUrl)
+                .get()
+                .build();
 
-            try {
-                OkHttpClient client = new OkHttpClient();
+        try {
+            OkHttpClient client = new OkHttpClient();
 
-                Response newAuthResponse = client.newCall(newAuthRequest).execute();
-                if (newAuthResponse.isSuccessful()) {
-                    String userToken = newAuthResponse.body().string();
-                    return userToken;
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
+            Response newAuthResponse = client.newCall(newAuthRequest).execute();
+            if (newAuthResponse.isSuccessful()) {
+                String userToken = newAuthResponse.body().string();
+                return userToken;
             }
-            return null;
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
-        @Override
-        protected void onPostExecute(String userToken) {
-            configureWithUserToken(userToken);
-        }
+        return null;
     }
 }
