@@ -8,7 +8,6 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -184,7 +183,7 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
         api = ExpertConnectApiProxy.getInstance(this);
         expertConnect = ExpertConnect.getInstance(this);
 
-        if (TextUtils.isEmpty(MainApplication.TOKEN)) {
+        if (!expertConnect.isUserTokenProvided() && !expertConnect.isTokenProviderAvailable()) {
             showAccessTokenMissingDialog();
             return;
         }
@@ -212,6 +211,17 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
         api.unregister(notificationReceiver);
         unregisterConversation();
         super.onDestroy();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(expertConnect.isChatActive()) {
+            holdr.startChat.setText(R.string.continue_chat);
+        }
+        if(expertConnect.isCallbackActive()) {
+            holdr.voiceCallback.setText(R.string.cancel_callback);
+        }
     }
 
     @Override
@@ -256,19 +266,34 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
         api.startInterviewForms(DEMO_FORM);
     }
 
+    @Override
+    public void onVoiceCallbackClick(MaterialButton voiceCallback) {
+        if(expertConnect.isCallbackActive()) {
+            api.closeReplyBackChannel(expertConnect.getCallbackChannel());
+        } else {
+            startActivity(new Intent(this, VoiceCallbackActivity.class));
+        }
+    }
+
+    @Override
+    public void onAnswerEngineClick(MaterialButton answerEngineCallback) {
+        Toast.makeText(this, "Coming soon...", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onChatClick(MaterialButton chatCallback) {
+        Toast.makeText(this, "Coming soon...", Toast.LENGTH_LONG).show();
+    }
+
     private static int interactionsCount = 0;
     @Override
     public void onSendBreadcrumbClick(MaterialButton startForm) {
-        if (expertConnect.getBreadcrumbsSessionId() != null) {
-            interactionsCount++;
-            breadcrumbsAction(this,
-                    "User interaction count",
-                    Integer.toString(interactionsCount),
-                    "HumanifyDemo-SampleActivity",
-                    "NA");
-        } else {
-            Toast.makeText(this, "Breadcrumb Session is not created", Toast.LENGTH_LONG).show();
-        }
+        interactionsCount++;
+        breadcrumbsAction(this,
+                "User interaction count",
+                Integer.toString(interactionsCount),
+                "HumanifyDemo-SampleActivity",
+                "NA");
     }
 
     @Override
@@ -302,8 +327,8 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
     }
 
     private void handleCallbackEnd(ExpertConnectNotification notification) {
-        String message = "Callback ended with reason - "+notification.getMessage();
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+        holdr.voiceCallback.setText(R.string.start_voice_callback);
+        Toast.makeText(this, notification.getMessage(), Toast.LENGTH_LONG).show();
     }
 
     private void handleChatEnd(ExpertConnectNotification notification) {
@@ -316,7 +341,7 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
             ExpertConnectApiProxy.
                 getInstance(getApplicationContext())
                 .sendNotification(new ExpertConnectNotification(
-                    ExpertConnectNotification.TYPE_WORKFLOW_ESCLATE_TO_CHAT, DEMO_SKILL));
+                    ExpertConnectNotification.TYPE_WORKFLOW_ESCALATE_TO_CHAT, DEMO_SKILL));
         }
     }
 
@@ -336,20 +361,10 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
         if(expertConnect.getIdentityManager().getJourneyId() == null)
             return;
 
-        BreadcrumbsSession breadcrumbsSession = new BreadcrumbsSession();
+        BreadcrumbsSession breadcrumbsSession = expertConnect.newBreadcrumbsSession();
 
         breadcrumbsSession.setJourneyId(expertConnect.getIdentityManager().getJourneyId());
         breadcrumbsSession.setTenantId(expertConnect.getOrganization());
-        breadcrumbsSession.setPlatform("Android");
-        breadcrumbsSession.setModel("Model");
-        breadcrumbsSession.setDeviceId("deviceId");
-        breadcrumbsSession.setPhoneNumber("phone number");
-        breadcrumbsSession.setOsVersion("osVersion");
-        breadcrumbsSession.setIpAddress("ipAddress");
-        breadcrumbsSession.setGeoLocation("geoLocation");
-        breadcrumbsSession.setBrowserType("NA");
-        breadcrumbsSession.setBrowserVersion("NA");
-        breadcrumbsSession.setResolution("resolution");
 
         api.breadcrumbsSession(breadcrumbsSession);
     }
@@ -360,10 +375,7 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
                                   String actionSource,
                                   String actionDestination) {
 
-        if(expertConnect.getIdentityManager().getJourneyId() == null || expertConnect.getBreadcrumbsSessionId() == null)
-            return;
-
-        BreadcrumbsAction breadcrumbsAction = new BreadcrumbsAction();
+        BreadcrumbsAction breadcrumbsAction = expertConnect.newBreadcrumbsAction();
 
         breadcrumbsAction.setJourneyId(expertConnect.getIdentityManager().getJourneyId());
         breadcrumbsAction.setSessionId(expertConnect.getBreadcrumbsSessionId());
@@ -397,18 +409,18 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
     }
     private void registerConversation() {
         ExpertConnectApiProxy.getInstance(this)
-                .registerGetConversationEvent(receiverConversationEvent = new ApiBroadcastReceiver<ConversationEvent>() {
-                    @Override
-                    public void onSuccess(Context context, ConversationEvent result) {
-                        if (expertConnect.isChatActive()) {
-                            holdr.startChat.setText("*" + getResources().getString(R.string.continue_chat));
-                        }
+            .registerGetConversationEvent(receiverConversationEvent = new ApiBroadcastReceiver<ConversationEvent>() {
+                @Override
+                public void onSuccess(Context context, ConversationEvent result) {
+                    if (expertConnect.isChatActive()) {
+                        holdr.startChat.setText("*" + getResources().getString(R.string.continue_chat));
                     }
+                }
 
-                    @Override
-                    public void onError(Context context, ApiException error) {
-                        Log.d(getClass().getSimpleName(), error.getUserMessage(getResources()));
-                    }
-                });
+                @Override
+                public void onError(Context context, ApiException error) {
+                    Log.d(getClass().getSimpleName(), error.getUserMessage(getResources()));
+                }
+            });
     }
 }

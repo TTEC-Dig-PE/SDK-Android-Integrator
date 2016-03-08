@@ -5,15 +5,16 @@ repositories {
     flatDir {
         dirs 'libs'
     }
+    jcenter()
 }
 
 android {
-    compileSdkVersion 21
-    buildToolsVersion "21.1.2"
+    compileSdkVersion 23
+    buildToolsVersion "23.0.1"
     defaultConfig {
         applicationId 'com.humanify.expertconnect.sample'
         minSdkVersion 15
-        targetSdkVersion 21
+        targetSdkVersion 23
         versionCode 1
         versionName "1.0.0"
     }
@@ -40,13 +41,13 @@ android {
 }
 
 dependencies {
-    compile 'com.humanify.expertconnect:expertconnect:1.1.0-debug@aar'
+    compile 'com.humanify.expertconnect:expertconnect:5.2.0-debug@aar'
 
-    compile 'com.android.support:appcompat-v7:22.1.1'
+    compile 'com.android.support:appcompat-v7:23.0.1'
+    compile 'com.android.support:recyclerview-v7:23.0.1'
     compile 'com.squareup.okhttp:okhttp:2.3.0'
     compile 'com.squareup.okhttp:okhttp-ws:2.3.0'
     compile 'com.google.code.gson:gson:2.3'
-    compile 'com.android.support:recyclerview-v7:21.0.2'
     compile 'com.squareup.retrofit:retrofit:1.9.0'
     // Unfortunately we can't use the latest version of picasso until https://github.com/square/picasso/issues/364 is fixed.
     compile 'com.squareup.picasso:picasso:2.4.0'
@@ -55,4 +56,5 @@ dependencies {
 
     // Additional sample app dependencies
     compile 'com.google.android.gms:play-services-base:7.3.0'
+    compile 'org.altbeacon:android-beacon-library:2+'
 }
