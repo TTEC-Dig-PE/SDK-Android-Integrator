@@ -220,7 +220,7 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
             holdr.startChat.setText(R.string.continue_chat);
         }
         if(expertConnect.isCallbackActive()) {
-            holdr.voiceCallback.setText(R.string.cancel_callback);
+            holdr.voiceCallback.setText(R.string.end_callback);
         }
     }
 

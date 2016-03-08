@@ -289,12 +289,14 @@ public class VoiceCallbackActivity extends AppCompatActivity implements Holdr_Ac
 
     private void handleChannelState(ChannelState state, Channel channel){
         if (ChannelState.STATE_ANSWERED.equals(state.getState())) {
-            Log.d(TAG, "Voice call answered");
+            holdr.requestCall.setText(R.string.end_callback);
         }
         else if (ChannelState.STATE_DISCONNECTED.equals(state.getState())
                 || ChannelState.STATE_TIMEOUT.equals(state.getState()))
         {
             Log.d(TAG, "Voice call disconnected by agent");
+            holdr.requestCall.setText(R.string.request_callback);
+            callState = CallState.DISCONNECTED;
         }
         else{
             if(channel != null) {
