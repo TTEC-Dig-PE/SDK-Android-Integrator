@@ -3,7 +3,6 @@ package com.humanify.expertconnect.sample;
 import android.app.Application;
 import android.net.Uri;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.humanify.expertconnect.ExpertConnect;
 import com.humanify.expertconnect.ExpertConnectConfig;
@@ -14,8 +13,6 @@ import com.squareup.okhttp.Response;
 import java.io.IOException;
 
 public class MainApplication extends Application {
-
-
 
     public static final String TOKEN = ""; // YOUR TOKEN GOES HERE
     public static final String API_ENDPOINT = "http://api.ce03.humanify.com";
@@ -69,8 +66,6 @@ public class MainApplication extends Application {
     private String getUserSessionToken() {
         final ExpertConnect expertConnect = ExpertConnect.getInstance(this);
         String userId = expertConnect.getIdentityManager().getUserId();
-        Log.d("***** DEBUG *****", "END POINT : " + expertConnect.getEndPoint());
-
         Uri.Builder builder = Uri.parse(expertConnect.getEndPoint()).buildUpon();
         builder.appendEncodedPath("authServerProxy/v1/tokens/ust");
 
