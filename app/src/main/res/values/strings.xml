@@ -49,12 +49,33 @@
     <string name="title_activity_sample">SampleActivity</string>
 
     <!-- Demo -->
+    <string name="high_level_sdk">High Level SDK Calls (UI)</string>
+    <string name="low_level_sdk">Low Level SDK Calls (non-UI)</string>
+
     <string name="start_chat">Start Chat</string>
     <string name="continue_chat">Continue Chat</string>
     <string name="start_answer_engine">Start Answer Engine</string>
     <string name="start_voice_callback">Voice Callback</string>
-    <string name="start_form">Agent Performance Survey</string>
+    <string name="start_form">Agent Survey Form</string>
     <string name="send_breadcrumb">Send Breadcrumb</string>
     <string name="make_decision">Make Decision</string>
 
+    <string name="estimated_wait_time">Estimated Wait Time</string>
+    <string name="enter_phone_label">Enter Phone Number</string>
+    <string name="request_callback">Request Callback</string>
+    <string name="cancel_callback">Cancel Callback</string>
+    <string name="end_callback">End Callback</string>
+    <string name="processing_callback">Processing...</string>
+    <string name="cancel">Cancel</string>
+
+    <string name="no_agents_available">"No Agents available!</string>
+    <plurals name="agents_available">
+        <item quantity="one">%d Agent Available</item>
+        <item quantity="other">%d Agents Available</item>
+    </plurals>
+    <plurals name="agents_wait_time">
+        <item quantity="one">Wait time is %d Minute</item>
+        <item quantity="other">Wait time is %d Minutes</item>
+    </plurals>
+    <string name="wait_time_greater_than_five">%d minutes or longer</string>
 </resources>

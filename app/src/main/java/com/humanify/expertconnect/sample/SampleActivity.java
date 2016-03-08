@@ -214,6 +214,17 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if(expertConnect.isChatActive()) {
+            holdr.startChat.setText(R.string.continue_chat);
+        }
+        if(expertConnect.isCallbackActive()) {
+            holdr.voiceCallback.setText(R.string.cancel_callback);
+        }
+    }
+
+    @Override
     public void onStart() {
         super.onStart();
 
@@ -253,6 +264,25 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
     @Override
     public void onStartFormClick(MaterialButton startForm) {
         api.startInterviewForms(DEMO_FORM);
+    }
+
+    @Override
+    public void onVoiceCallbackClick(MaterialButton voiceCallback) {
+        if(expertConnect.isCallbackActive()) {
+            api.closeReplyBackChannel(expertConnect.getCallbackChannel());
+        } else {
+            startActivity(new Intent(this, VoiceCallbackActivity.class));
+        }
+    }
+
+    @Override
+    public void onAnswerEngineClick(MaterialButton answerEngineCallback) {
+        Toast.makeText(this, "Coming soon...", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onChatClick(MaterialButton chatCallback) {
+        Toast.makeText(this, "Coming soon...", Toast.LENGTH_LONG).show();
     }
 
     private static int interactionsCount = 0;
@@ -297,8 +327,8 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
     }
 
     private void handleCallbackEnd(ExpertConnectNotification notification) {
-        String message = "Callback ended with reason - "+notification.getMessage();
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+        holdr.voiceCallback.setText(R.string.start_voice_callback);
+        Toast.makeText(this, notification.getMessage(), Toast.LENGTH_LONG).show();
     }
 
     private void handleChatEnd(ExpertConnectNotification notification) {
@@ -311,7 +341,7 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
             ExpertConnectApiProxy.
                 getInstance(getApplicationContext())
                 .sendNotification(new ExpertConnectNotification(
-                    ExpertConnectNotification.TYPE_WORKFLOW_ESCLATE_TO_CHAT, DEMO_SKILL));
+                    ExpertConnectNotification.TYPE_WORKFLOW_ESCALATE_TO_CHAT, DEMO_SKILL));
         }
     }
 
