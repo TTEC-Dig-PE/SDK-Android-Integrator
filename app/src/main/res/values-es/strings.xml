@@ -29,10 +29,12 @@
     <string name="title_humanify">Humanify</string>
     <string name="personas">Personas</string>
     <string name="humanify">Humanify</string>
+    <string name="ibeacons">iBeacons</string>
     <string name="profile">Perfil</string>
     <string name="settings">Ajustes</string>
     <string name="navigation_drawer_open">Abrir el cajón de navegación</string>
     <string name="navigation_drawer_close">Cierre el cajón de navegación</string>
+    <string name="action_example"> Ejemplo de acción</string>
     <string name="push_notifications">Notificaciones Empujados</string>
     <string name="receive_notifications">Recibir Notificaciones</string>
     <string name="open_source_licenses">Licencias de Código Abierto</string>
@@ -42,4 +44,36 @@
     <string name="yes">Sí</string>
     <string name="no">No</string>
     <string name="error_creating_profile">Error en la Creación del Perfil</string>
+    <string name="title_activity_sample">SampleActivity</string>
+
+    <!-- Demo -->
+    <string name="high_level_sdk">Las llamadas de alto nivel del SDK (UI)</string>
+    <string name="low_level_sdk">Las llamadas de bajo nivel de SDK (non-UI)</string>
+
+    <string name="start_chat">Iniciar chat</string>
+    <string name="continue_chat">Continuar chat</string>
+    <string name="start_answer_engine">De arranque del motor respuesta</string>
+    <string name="start_voice_callback">Devolución de llamada de voz</string>
+    <string name="start_form">Formulario de encuesta de agente</string>
+    <string name="send_breadcrumb">Enviar Breadcrumb</string>
+    <string name="make_decision">Tomar una decisión</string>
+
+    <string name="estimated_wait_time">Estimación del tiempo de espera</string>
+    <string name="enter_phone_label">Ingresa número telefónico</string>
+    <string name="request_callback">solicitud de devolución de llamada</string>
+    <string name="cancel_callback">Cancelar devolución de llamada</string>
+    <string name="end_callback">fin de devolución de llamada</string>
+    <string name="processing_callback">Tratamiento...</string>
+    <string name="cancel">Cancelar</string>
+
+    <string name="no_agents_available">"No hay agentes disponibles!</string>
+    <plurals name="agents_available">
+        <item quantity="one">%d Agente</item>
+        <item quantity="other">%d Agentes</item>
+    </plurals>
+    <plurals name="agents_wait_time">
+        <item quantity="one">Espere &lt; %d Minuto</item>
+        <item quantity="other">Espere &lt; %d Minutos</item>
+    </plurals>
+    <string name="wait_time_greater_than_five">%d minutos o más largo</string>
 </resources>
