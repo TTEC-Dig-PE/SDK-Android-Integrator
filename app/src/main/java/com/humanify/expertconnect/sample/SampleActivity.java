@@ -90,7 +90,7 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
             IdentityManager identityManager = ExpertConnect.getInstance(context).getIdentityManager();
             String journeyId = result.getId();
             identityManager.setJourneyId(journeyId);
-            ExpertConnect.getInstance(context).setOraganization(result.getOrganization());
+            ExpertConnect.getInstance(context).setOrganization(result.getOrganization());
             breadcrumbsSession(context);
         }
 
@@ -183,7 +183,7 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
         api = ExpertConnectApiProxy.getInstance(this);
         expertConnect = ExpertConnect.getInstance(this);
 
-        if (!expertConnect.isUserTokenProvided() && !expertConnect.isTokenProviderAvailable()) {
+        if (/* Static Token !expertConnect.isUserTokenProvided()  && */ !expertConnect.isTokenProviderAvailable()) {
             showAccessTokenMissingDialog();
             return;
         }
@@ -282,7 +282,7 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
 
     @Override
     public void onChatClick(MaterialButton chatCallback) {
-        Toast.makeText(this, "Coming soon...", Toast.LENGTH_LONG).show();
+        startActivity(new Intent(this, ChatActivity.class));
     }
 
     private static int interactionsCount = 0;

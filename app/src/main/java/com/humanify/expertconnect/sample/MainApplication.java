@@ -14,10 +14,16 @@ import java.io.IOException;
 
 public class MainApplication extends Application {
 
-    public static final String API_ENDPOINT = "http://api.ce03.humanify.com";
+//    public static final String API_ENDPOINT = "http://api.ce03.humanify.com";
+//    public static final String TOKEN = "1e189b81-499d-4714-a4cb-0fe22e2d118c";      // YOUR TOKEN GOES HERE
+//    public static final String CLIENT_ID = "henry";  // YOUR CLIENT_ID GOES HERE
+
+    public static final String API_ENDPOINT = "http://api.dce1.humanify.com";
     public static final String TOKEN = "";      // YOUR TOKEN GOES HERE
-    public static final String CLIENT_ID = "";  // YOUR CLIENT_ID GOES HERE
+    public static final String CLIENT_ID = "mktwebextc";  // YOUR CLIENT_ID GOES HERE
+
     public static final String USER_ID = "Guest";
+    public static final String USER_NAME = "Guest";
 
     // breadcrumb configuration
     public static final int CACHE_COUNT = 3;
@@ -33,8 +39,10 @@ public class MainApplication extends Application {
     private void configureWithUserToken(String userToken) {
         final ExpertConnect expertConnect = ExpertConnect.getInstance(this);
         expertConnect.setClientId(MainApplication.CLIENT_ID);
+        expertConnect.setUserName(USER_NAME);
 
         if (!TextUtils.isEmpty(userToken)) {
+            // *********************************** Static User Token ***********************************;
             expertConnect.setConfig(new ExpertConnectConfig()
                     .setMainNavigationClass(SampleActivity.class)
                     .setEndpoint(MainApplication.API_ENDPOINT)
@@ -45,7 +53,7 @@ public class MainApplication extends Application {
             // *********************************** Token Provider ***********************************;
             expertConnect.setConfig(new ExpertConnectConfig()
                 .setMainNavigationClass(SampleActivity.class)
-                .setEndpoint(expertConnect.getEndPoint())
+                .setEndpoint(MainApplication.API_ENDPOINT)
                 .setCacheCount(CACHE_COUNT)
                 .setCacheTime(CACHE_TIME)
                 .setTokenProvider(new ExpertConnectConfig.TokenProvider() {
@@ -58,7 +66,6 @@ public class MainApplication extends Application {
                     return null;
                     }
                 }));
-            // *********************************** Token Provider ***********************************;
         }
     }
 

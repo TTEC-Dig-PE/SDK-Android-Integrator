@@ -32,27 +32,76 @@ import com.humanify.expertconnect.sample.holdr.Holdr_ActivityVoicecallback;
 import com.humanify.expertconnect.util.ApiResult;
 import com.humanify.expertconnect.view.compat.MaterialButton;
 
-public class VoiceCallbackActivity extends AppCompatActivity implements Holdr_ActivityVoicecallback.Listener{
+public class VoiceCallbackActivity extends AppCompatActivity implements Holdr_ActivityVoicecallback.Listener {
 
     private final static String TAG = VoiceCallbackActivity.class.getSimpleName();
-    private static String DEMO_SKILL = "CE_Mobile_Chat";
+    private final static String DEMO_SKILL = "CE_Mobile_Chat";
+
+    private enum State {NONE, REQUESTED, CONNECTED, DISCONNECTED}
 
     private Holdr_ActivityVoicecallback holdr;
 
     private ExpertConnectApiProxy api;
     private ExpertConnect expertConnect;
 
-    private Channel channel;
-    private ApiBroadcastReceiver<Channel> createChannelReceiver;
-    private ApiBroadcastReceiver<ConversationEvent> conversationEventReceiver;
-    private EmptyApiBroadcastReceiver closeChannelReceiver;
+    private Channel voiceChannel;
+    private ApiBroadcastReceiver<Channel> createChannelReceiver = new ApiBroadcastReceiver<Channel>() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            super.onReceive(context, intent);
+        }
+
+        @Override
+        public void onSuccess(Context context, Channel result) {
+            voiceChannel = result;
+            state = State.CONNECTED;
+            holdr.requestCall.setText(R.string.cancel_callback);
+        }
+
+        @Override
+        public void onError(Context context, ApiException error) {
+            Log.d(TAG, error.getMessage(), error);
+        }
+    };
+    private ApiBroadcastReceiver<ConversationEvent> conversationEventReceiver = new ApiBroadcastReceiver<ConversationEvent>() {
+        @Override
+        public void onSuccess(Context context, ConversationEvent result) {
+            if (result instanceof ChannelState) {
+                if (voiceChannel != null) {
+                    handleChannelState((ChannelState)result, voiceChannel);
+                }
+            }
+        }
+
+        @Override
+        public void onError(Context context, ApiException error) {
+            Log.d(TAG, error.getMessage(), error);
+        }
+    };
+    private EmptyApiBroadcastReceiver closeChannelReceiver = new EmptyApiBroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            super.onReceive(context, intent);
+        }
+
+        @Override
+        public void onSuccess(Context context) {
+            voiceChannel = null;
+            state = State.DISCONNECTED;
+            holdr.requestCall.setText(R.string.request_callback);
+        }
+
+        @Override
+        public void onError(Context context, ApiException error) {
+            Toast.makeText(context, error.getUserMessage(getResources()), Toast.LENGTH_SHORT).show();
+            Log.d(TAG, error.getMessage(), error);
+        }
+    };
 
     private static final int WAIT_TIME = 5;
     private int estimatedWaitTime = -1;
 
-    private enum CallState {NONE, REQUESTED, CONNECTED, DISCONNECTED}
-
-    CallState callState = CallState.NONE;
+    State state = State.NONE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,66 +152,9 @@ public class VoiceCallbackActivity extends AppCompatActivity implements Holdr_Ac
     @Override
     protected void onStart() {
         super.onStart();
-        // create channel
-        api.registerCreateChannel(createChannelReceiver = new ApiBroadcastReceiver<Channel>() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                super.onReceive(context, intent);
-            }
-
-            @Override
-            public void onSuccess(Context context, Channel result) {
-                channel = result;
-                callState = CallState.CONNECTED;
-                holdr.requestCall.setText(R.string.cancel_callback);
-            }
-
-            @Override
-            public void onError(Context context, ApiException error) {
-                holdr.requestCall.setText(R.string.request_callback);
-                Toast.makeText(context, error.getUserMessage(getResources()), Toast.LENGTH_SHORT).show();
-                Log.d(TAG, error.getMessage(), error);
-            }
-        });
-
-        // channel events
-        api.registerGetConversationEvent(conversationEventReceiver = new ApiBroadcastReceiver<ConversationEvent>() {
-            @Override
-            public void onSuccess(Context context, ConversationEvent result) {
-                if (result instanceof ChannelState) {
-                    if (channel != null) {
-                        handleChannelState((ChannelState)result, channel);
-                    }
-                }
-            }
-
-            @Override
-            public void onError(Context context, ApiException error) {
-                Log.d(TAG, error.getMessage(), error);
-            }
-        });
-
-        // close channel
-        api.registerCloseReplyBackChannel(closeChannelReceiver = new EmptyApiBroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                // TODO : Call Completed and Change back to Request
-                super.onReceive(context, intent);
-            }
-
-            @Override
-            public void onSuccess(Context context) {
-                channel = null;
-                callState = CallState.DISCONNECTED;
-                holdr.requestCall.setText(R.string.request_callback);
-            }
-
-            @Override
-            public void onError(Context context, ApiException error) {
-                Toast.makeText(context, error.getUserMessage(getResources()), Toast.LENGTH_SHORT).show();
-                Log.d(TAG, error.getMessage(), error);
-            }
-        });
+        api.registerCreateChannel(createChannelReceiver);
+        api.registerGetConversationEvent(conversationEventReceiver);
+        api.registerCloseReplyBackChannel(closeChannelReceiver);
     }
 
     @Override
@@ -183,10 +175,9 @@ public class VoiceCallbackActivity extends AppCompatActivity implements Holdr_Ac
         return super.onOptionsItemSelected(item);
     }
 
-
     @Override
     public void onRequestCallClick(MaterialButton requestCall) {
-        switch(callState) {
+        switch(state) {
             case NONE:
             case DISCONNECTED:
                 if (!expertConnect.isCallbackActive()) {
@@ -202,7 +193,7 @@ public class VoiceCallbackActivity extends AppCompatActivity implements Holdr_Ac
                     api.createChannel(channelRequest);
                     holdr.requestCall.setText(R.string.processing_callback);
 
-                    callState = CallState.REQUESTED;
+                    state = State.REQUESTED;
                 }
                 break;
             case REQUESTED:
@@ -212,7 +203,7 @@ public class VoiceCallbackActivity extends AppCompatActivity implements Holdr_Ac
                 break;
             case CONNECTED:
                 if (expertConnect.isCallbackActive()) {
-                    api.closeReplyBackChannel(channel);
+                    api.closeReplyBackChannel(voiceChannel);
                 }
                 break;
         }
@@ -288,21 +279,21 @@ public class VoiceCallbackActivity extends AppCompatActivity implements Holdr_Ac
     }
 
     private void handleChannelState(ChannelState state, Channel channel){
-        if (ChannelState.STATE_ANSWERED.equals(state.getState())) {
-            holdr.requestCall.setText(R.string.end_callback);
-        }
-        else if (ChannelState.STATE_DISCONNECTED.equals(state.getState())
-                || ChannelState.STATE_TIMEOUT.equals(state.getState()))
-        {
-            Log.d(TAG, "Voice call disconnected by agent");
-            holdr.requestCall.setText(R.string.request_callback);
-            callState = CallState.DISCONNECTED;
-        }
-        else{
-            if(channel != null) {
+        switch(state.getState()) {
+            case ChannelState.STATE_ANSWERED:
+                Log.d(TAG, "Channel answered by agent");
+                holdr.requestCall.setText(R.string.end_callback);
+                break;
+            case ChannelState.STATE_DISCONNECTED:
+            case ChannelState.STATE_TIMEOUT:
+                Log.d(TAG, "Channel disconnected by agent");
+                holdr.requestCall.setText(R.string.request_callback);
+                this.state = State.DISCONNECTED;
+                break;
+            default:
                 estimatedWaitTime = channel.getEstimatedWait();
                 Log.d(TAG, "Estimated Wait Time = " + estimatedWaitTime);
-            }
+                break;
         }
     }
 
