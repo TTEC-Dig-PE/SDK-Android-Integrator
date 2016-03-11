@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
+import android.text.Html;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -27,7 +28,6 @@ import android.widget.Toast;
 import com.humanify.expertconnect.ExpertConnect;
 import com.humanify.expertconnect.api.ApiBroadcastReceiver;
 import com.humanify.expertconnect.api.ApiException;
-import com.humanify.expertconnect.api.EmptyApiBroadcastReceiver;
 import com.humanify.expertconnect.api.ExpertConnectApiProxy;
 import com.humanify.expertconnect.api.IdentityManager;
 import com.humanify.expertconnect.api.model.SkillDetail;
@@ -63,11 +63,11 @@ import java.util.ArrayList;
 public class ChatActivity extends AppCompatActivity implements Holdr_ActivityChat.Listener {
 
     private final static String TAG = ChatActivity.class.getSimpleName();
-    //private final static String DEMO_SKILL = "CE_Mobile_Chat";
-    private final static String DEMO_SKILL = "Calls for nainesh_mktwebextc";
+    private final static String DEMO_SKILL = "CE_Mobile_Chat";
 
-    private final static int LOADER_CHECK_AGENT = 1000;
-    private final static int LOADER_GET_ANSWERS = 1001;
+    private final static int LOADER_GET_ANSWERS = 1000;
+    private final static int LOADER_CHECK_AGENTS = 1001;
+
 
     private enum State {NONE, REQUESTED, CONNECTED, DISCONNECTED}
 
@@ -119,27 +119,6 @@ public class ChatActivity extends AppCompatActivity implements Holdr_ActivityCha
         }
     };
 
-    private EmptyApiBroadcastReceiver closeChannelReceiver = new EmptyApiBroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            super.onReceive(context, intent);
-        }
-
-        @Override
-        public void onSuccess(Context context) {
-            Log.d(TAG, "Channel closed");
-            chatChannel = null;
-            state = State.DISCONNECTED;
-            setEnableEntry(false);
-        }
-
-        @Override
-        public void onError(Context context, ApiException error) {
-            Toast.makeText(context, error.getUserMessage(getResources()), Toast.LENGTH_SHORT).show();
-            Log.d(TAG, error.getMessage(), error);
-        }
-    };
-
     private LoaderManager.LoaderCallbacks<ApiResult<AnswerEngineResponse>> answerEngineResponseCallback
             = new LoaderManager.LoaderCallbacks<ApiResult<AnswerEngineResponse>>() {
 
@@ -187,7 +166,7 @@ public class ChatActivity extends AppCompatActivity implements Holdr_ActivityCha
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setTitle(getString(com.humanify.expertconnect.R.string.expertconnect_phone_call));
+            actionBar.setTitle(getString(com.humanify.expertconnect.R.string.expertconnect_chat));
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
@@ -239,9 +218,12 @@ public class ChatActivity extends AppCompatActivity implements Holdr_ActivityCha
         super.onStart();
         api.registerCreateChannel(createChannelReceiver);
         api.registerGetConversationEvent(conversationEventReceiver);
-        api.registerCloseReplyBackChannel(closeChannelReceiver);
 
+        // start chat without checking agent available and then start chat
         startChat(DEMO_SKILL);
+
+        // check agent available and then start chat
+        //checkAgentThenStartChat(DEMO_SKILL);
     }
 
     @Override
@@ -252,7 +234,6 @@ public class ChatActivity extends AppCompatActivity implements Holdr_ActivityCha
 
         api.unregister(createChannelReceiver);
         api.unregister(conversationEventReceiver);
-        api.unregister(closeChannelReceiver);
     }
 
     @Override
@@ -361,7 +342,9 @@ public class ChatActivity extends AppCompatActivity implements Holdr_ActivityCha
             SendQuestionCommand questionCommand = (SendQuestionCommand) message;
             Bundle bundle = new Bundle();
             bundle.putParcelable("questionCommand", questionCommand);
-            getSupportLoaderManager().restartLoader(LOADER_GET_ANSWERS, bundle, answerEngineResponseCallback);
+            getSupportLoaderManager().initLoader(LOADER_GET_ANSWERS, bundle, answerEngineResponseCallback);
+            Log.d(TAG, "***** Get Answer for [" + questionCommand.getText(getResources()) + "] " + message.getClass().getSimpleName());
+            return;
         } else if (message instanceof NotificationMessage) {
             MediaMessage mediaMessage = (MediaMessage) message;
             if (mediaMessage.getMediaType() == MediaMessage.MEDIA_IMAGE) {
@@ -392,6 +375,7 @@ public class ChatActivity extends AppCompatActivity implements Holdr_ActivityCha
     }
 
     public void appendMessage(Message message) {
+        Log.d(TAG, "Chat Message : ADD " + message.getClass().getSimpleName());
         messageAdapter.getMessages().add(message);
         messageAdapter.notifyDataSetChanged();
     }
@@ -415,14 +399,7 @@ public class ChatActivity extends AppCompatActivity implements Holdr_ActivityCha
                     // error - show dialog and finish activity
                 } else {
                     // connect
-                    ChannelRequest channelRequest = new ChannelRequest.Builder(ChatActivity.this)
-                        .setTo(currentSkill)
-                        .setFrom(expertConnect.getUserId())
-                        .setSubject("help")
-                        .setMediaType(ChannelRequest.MEDIA_TYPE_CHAT)
-                        .setPriority(1)
-                        .build();
-                    api.createChannel(channelRequest);
+                    addChannel(currentSkill);
                 }
 
             } catch (ApiException e) {
@@ -436,10 +413,25 @@ public class ChatActivity extends AppCompatActivity implements Holdr_ActivityCha
         }
     };
 
+    private void addChannel(final String skill) {
+        ChannelRequest channelRequest = new ChannelRequest.Builder(ChatActivity.this)
+                .setTo(skill)
+                .setFrom(expertConnect.getUserId())
+                .setSubject("help")
+                .setMediaType(ChannelRequest.MEDIA_TYPE_CHAT)
+                .setPriority(1)
+                .build();
+        api.createChannel(channelRequest);
+    }
+
     private void startChat(final String skill) {
+        addChannel(skill);
+    }
+
+    private void checkAgentThenStartChat(final String skill) {
         Bundle args = new Bundle();
         args.putString("skill", skill);
-        getSupportLoaderManager().initLoader(0, args, skillLoader);
+        getSupportLoaderManager().initLoader(LOADER_CHECK_AGENTS, args, skillLoader);
     }
 
     private void endChat() {
@@ -472,26 +464,29 @@ public class ChatActivity extends AppCompatActivity implements Holdr_ActivityCha
         @Override
         public void onBindViewHolder(MessageViewHolder holder, int position) {
             Message message = messages.get(position);
-            String chatMessage = null;
+            CharSequence chatMessage = null;
             if (message instanceof AddParticipant) {
                 chatMessage = ((AddParticipant)message).getText(getResources()).toString();
             } else if (message instanceof TextMessage) {
-                chatMessage = ((TextMessage)message).getText(getResources()).toString();
+                chatMessage = ((TextMessage) message).getText(getResources()).toString();
+                if (message instanceof SendQuestionCommand) {
+                    SendQuestionCommand sendQuestionCommand = ((SendQuestionCommand)message);
+                    if (!TextUtils.isEmpty(sendQuestionCommand.getAnswer())) {
+                        chatMessage = Html.fromHtml(sendQuestionCommand.getAnswer());
+                    }
+                }
             } else if (message instanceof StatusMessage) {
                 chatMessage = ((StatusMessage)message).getText(getResources()).toString();
             }
-            Log.d(TAG, "ChatMessage : " + message.getClass().getSimpleName() + "::" + chatMessage);
             if (!TextUtils.isEmpty(chatMessage)) {
-                Log.d(TAG, "ChatMessage : " + message.getClass().getSimpleName() + "::" + chatMessage);
                 holder.textMessage.setText(chatMessage);
             } else {
-                holder.textMessage.setText("ChatMessage : " + message.getClass().getSimpleName());
+                holder.textMessage.setText("Message type [" + message.getClass().getSimpleName() + "] not handled.");
             }
         }
 
         @Override
         public int getItemCount() {
-            Log.d(TAG, "getItemCount : " + messages.size());
             return messages.size();
         }
 

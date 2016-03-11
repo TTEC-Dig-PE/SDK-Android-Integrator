@@ -18,9 +18,13 @@ public class MainApplication extends Application {
 //    public static final String TOKEN = "1e189b81-499d-4714-a4cb-0fe22e2d118c";      // YOUR TOKEN GOES HERE
 //    public static final String CLIENT_ID = "henry";  // YOUR CLIENT_ID GOES HERE
 
-    public static final String API_ENDPOINT = "http://api.dce1.humanify.com";
-    public static final String TOKEN = "";      // YOUR TOKEN GOES HERE
+    public static final String API_ENDPOINT = "http://api.sce1.humanify.com";
+    public static final String TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodW1hbmlmeS5jb20iLCJpYXQiOjE0NTc2MzM1MTEsImV4cCI6MTQ4OTE2OTUxNywiYXVkIjoib3BzLmh1bWFuaWZ5LmNvbSIsInN1YiI6Imd3ZW5AZW1haWwuY29tIiwiY2xpZW50X2lkIjoic2NlMV9vcHMiLCJhcGlLZXkiOiI4MDIwNTdmZjliNWI0ZWI3ZmJiODg1NmI2ZWIyY2M1YiJ9.PqeivEklghpXDlvMS1Y6g2BEWQBnmGqd3O-XOcJQwic";      // YOUR TOKEN GOES HERE
     public static final String CLIENT_ID = "mktwebextc";  // YOUR CLIENT_ID GOES HERE
+
+//    public static final String API_ENDPOINT = "http://api.dce1.humanify.com";
+//    public static final String TOKEN = "";      // YOUR TOKEN GOES HERE
+//    public static final String CLIENT_ID = "mktwebextc";  // YOUR CLIENT_ID GOES HERE
 
     public static final String USER_ID = "Guest";
     public static final String USER_NAME = "Guest";
@@ -72,8 +76,6 @@ public class MainApplication extends Application {
     private String getUserSessionToken() {
         final ExpertConnect expertConnect = ExpertConnect.getInstance(this);
         String userId = expertConnect.getIdentityManager().getUserId();
-        Uri.Builder builder = Uri.parse(expertConnect.getEndPoint()).buildUpon();
-        builder.appendEncodedPath("authServerProxy/v1/tokens/ust");
 
         String newAuthUrl = Uri.parse(expertConnect.getEndPoint()).buildUpon()
                 .appendEncodedPath("authServerProxy/v1/tokens/ust")
