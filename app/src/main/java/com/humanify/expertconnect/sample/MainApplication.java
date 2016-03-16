@@ -15,8 +15,8 @@ import java.io.IOException;
 public class MainApplication extends Application {
 
     public static final String API_ENDPOINT = "http://api.ce03.humanify.com";
-    public static final String TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodW1hbmlmeS5jb20iLCJpYXQiOjE0NTYxNzQzMTMsImV4cCI6MTQ4NzcxMDMxNywiYXVkIjoic2VydmljZXMuY3guZm9yZC5jb20uaWRlbnRpdHlEZWxlZ2F0ZSIsInN1YiI6ImtlbkBmb3JkLmNvbSIsImFwaUtleSI6IjgwMjA1N2ZmOWI1YjRlYjdmYmI4ODU2YjZlYjJjYzViIiwiY2xpZW50X2lkIjoiaGVucnkifQ.H2OhXg9WQPg20pvxe9t5mIpkeWsDp6xyjIKp79V7YOU";      // YOUR TOKEN GOES HERE
-    public static final String CLIENT_ID = "henry";  // YOUR CLIENT_ID GOES HERE
+    public static final String TOKEN = "";      // YOUR TOKEN GOES HERE
+    public static final String CLIENT_ID = "";  // YOUR CLIENT_ID GOES HERE
     public static final String USER_ID = "Guest";
 
     // breadcrumb configuration
