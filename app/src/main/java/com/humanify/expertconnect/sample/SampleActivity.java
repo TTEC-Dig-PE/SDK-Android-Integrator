@@ -90,7 +90,7 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
             IdentityManager identityManager = ExpertConnect.getInstance(context).getIdentityManager();
             String journeyId = result.getId();
             identityManager.setJourneyId(journeyId);
-            ExpertConnect.getInstance(context).setOraganization(result.getOrganization());
+            ExpertConnect.getInstance(context).setOrganization(result.getOrganization());
             breadcrumbsSession(context);
         }
 
