@@ -47,6 +47,8 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
     private int noAnswerCount = 0;
     private static final int MAX_NO_ANSWER_COUNT = 2;
 
+    boolean highLevelChatActive = false;
+
     private ApiBroadcastReceiver<ParcelableMap> decisionReceiver = new ApiBroadcastReceiver<ParcelableMap>(){
 
         @Override
@@ -183,7 +185,7 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
         api = ExpertConnectApiProxy.getInstance(this);
         expertConnect = ExpertConnect.getInstance(this);
 
-        if (!expertConnect.isUserTokenProvided() && !expertConnect.isTokenProviderAvailable()) {
+        if (/* Static Token */ !expertConnect.isUserTokenProvided() /* &&  !expertConnect.isTokenProviderAvailable() Token Provider */) {
             showAccessTokenMissingDialog();
             return;
         }
@@ -216,7 +218,7 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
     @Override
     protected void onResume() {
         super.onResume();
-        if(expertConnect.isChatActive()) {
+        if(highLevelChatActive && expertConnect.isChatActive()) {
             holdr.startChat.setText(R.string.continue_chat);
         }
         if(expertConnect.isCallbackActive()) {
@@ -248,6 +250,7 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
 
     @Override
     public void onStartChatClick(MaterialButton startChat) {
+        highLevelChatActive = true;
         api.startChat(DEMO_SKILL, null);
     }
 
@@ -282,7 +285,7 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
 
     @Override
     public void onChatClick(MaterialButton chatCallback) {
-        Toast.makeText(this, "Coming soon...", Toast.LENGTH_LONG).show();
+        startActivity(new Intent(this, ChatActivity.class));
     }
 
     private static int interactionsCount = 0;
@@ -351,7 +354,7 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
     }
 
     private void handleChatLeftWithoutEnding(ExpertConnectNotification notification) {
-        if(expertConnect.isChatActive()) {
+        if(highLevelChatActive && expertConnect.isChatActive()) {
             holdr.startChat.setText(R.string.continue_chat);
         }
     }
@@ -412,7 +415,7 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
             .registerGetConversationEvent(receiverConversationEvent = new ApiBroadcastReceiver<ConversationEvent>() {
                 @Override
                 public void onSuccess(Context context, ConversationEvent result) {
-                    if (expertConnect.isChatActive()) {
+                    if (highLevelChatActive && expertConnect.isChatActive()) {
                         holdr.startChat.setText("*" + getResources().getString(R.string.continue_chat));
                     }
                 }

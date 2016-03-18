@@ -28,6 +28,11 @@
             android:windowSoftInputMode="adjustResize">
         </activity>
 
+        <activity
+            android:name=".ChatActivity"
+            android:windowSoftInputMode="adjustResize">
+        </activity>
+
     </application>
 
 </manifest>
