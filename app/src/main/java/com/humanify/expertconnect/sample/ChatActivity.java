@@ -435,7 +435,6 @@ public class ChatActivity extends AppCompatActivity implements Holdr_ActivityCha
     }
 
     private void endChat() {
-        Log.d(TAG, "Close Chat : " + expertConnect.isChatActive() + ":" + (chatChannel != null) );
         if (expertConnect.isChatActive()) {
             api.closeChannel(chatChannel);
         }

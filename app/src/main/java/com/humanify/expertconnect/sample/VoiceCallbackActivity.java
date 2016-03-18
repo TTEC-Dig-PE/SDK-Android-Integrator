@@ -60,7 +60,9 @@ public class VoiceCallbackActivity extends AppCompatActivity implements Holdr_Ac
 
         @Override
         public void onError(Context context, ApiException error) {
-            Log.d(TAG, error.getMessage(), error);
+            holdr.requestCall.setText(R.string.request_callback);
+            Toast.makeText(context, error.getUserMessage(getResources()), Toast.LENGTH_SHORT).show();
+            Log.d(TAG, error.getUserMessage(getResources()));
         }
     };
     private ApiBroadcastReceiver<ConversationEvent> conversationEventReceiver = new ApiBroadcastReceiver<ConversationEvent>() {
@@ -94,7 +96,7 @@ public class VoiceCallbackActivity extends AppCompatActivity implements Holdr_Ac
         @Override
         public void onError(Context context, ApiException error) {
             Toast.makeText(context, error.getUserMessage(getResources()), Toast.LENGTH_SHORT).show();
-            Log.d(TAG, error.getMessage(), error);
+            Log.d(TAG, error.getUserMessage(getResources()));
         }
     };
 
