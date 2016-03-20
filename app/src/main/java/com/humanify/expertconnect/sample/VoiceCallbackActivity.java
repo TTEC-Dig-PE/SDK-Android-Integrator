@@ -60,6 +60,7 @@ public class VoiceCallbackActivity extends AppCompatActivity implements Holdr_Ac
 
         @Override
         public void onError(Context context, ApiException error) {
+            state = State.DISCONNECTED;
             holdr.requestCall.setText(R.string.request_callback);
             Toast.makeText(context, error.getUserMessage(getResources()), Toast.LENGTH_SHORT).show();
             Log.d(TAG, error.getUserMessage(getResources()));
