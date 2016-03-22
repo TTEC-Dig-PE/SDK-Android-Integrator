@@ -135,7 +135,8 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
 
         @Override
         public void onSuccess(Context context, BreadcrumbsAction result) {
-            String responseData =  "Breadcrumb Action Sent\n" + new Gson().toJson(result) + "\n";
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            String responseData =  "Breadcrumb Action Sent\n" + gson.toJson(result) + "\n";
             holdr.message.setText(responseData);
         }
 
