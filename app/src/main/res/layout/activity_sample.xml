@@ -23,19 +23,18 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/high_level_sdk"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
-            android:layout_marginTop="8dp" />
+            android:layout_marginTop="8dp"
+            android:text="@string/high_level_sdk" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/toolbar"
             android:orientation="horizontal"
-            android:paddingTop="2dp"
             android:paddingLeft="2dp"
-            android:paddingRight="2dp">
+            android:paddingRight="2dp"
+            android:paddingTop="2dp">
 
 
             <com.humanify.expertconnect.view.compat.MaterialButton
@@ -59,7 +58,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/toolbar"
             android:orientation="horizontal"
             android:paddingLeft="2dp"
             android:paddingRight="2dp">
@@ -85,7 +83,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/toolbar"
             android:orientation="horizontal"
             android:paddingLeft="2dp"
             android:paddingRight="2dp">
@@ -111,15 +108,14 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/low_level_sdk"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
-            android:layout_marginTop="8dp" />
+            android:layout_marginTop="8dp"
+            android:text="@string/low_level_sdk" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/toolbar"
             android:orientation="horizontal"
             android:paddingLeft="2dp"
             android:paddingRight="2dp">
@@ -147,11 +143,10 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/toolbar"
             android:orientation="horizontal"
-            android:paddingTop="2dp"
             android:paddingLeft="2dp"
-            android:paddingRight="2dp">
+            android:paddingRight="2dp"
+            android:paddingTop="2dp">
 
             <com.humanify.expertconnect.view.compat.MaterialButton
                 android:id="@+id/answerEngine"
@@ -164,19 +159,23 @@
             <View
                 android:id="@+id/empty"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1" />
 
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/message"
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="fill_parent"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="8dp" />
+            android:layout_height="wrap_content">
 
+            <TextView
+                android:id="@+id/message"
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="8dp" />
+        </ScrollView>
 
     </LinearLayout>
 
