@@ -4,8 +4,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -18,16 +16,13 @@ import com.humanify.expertconnect.api.ApiBroadcastReceiver;
 import com.humanify.expertconnect.api.ApiException;
 import com.humanify.expertconnect.api.ExpertConnectApiProxy;
 import com.humanify.expertconnect.api.IdentityManager;
-import com.humanify.expertconnect.api.model.AgentAvailabilityResponse;
 import com.humanify.expertconnect.api.model.ExpertConnectNotification;
 import com.humanify.expertconnect.api.model.JourneyResponse;
 import com.humanify.expertconnect.api.model.ParcelableMap;
-import com.humanify.expertconnect.api.model.SkillStatus;
 import com.humanify.expertconnect.api.model.breadcrumbs.BreadcrumbsAction;
 import com.humanify.expertconnect.api.model.breadcrumbs.BreadcrumbsSession;
 import com.humanify.expertconnect.api.model.conversationengine.ConversationEvent;
 import com.humanify.expertconnect.sample.holdr.Holdr_ActivitySample;
-import com.humanify.expertconnect.util.ApiResult;
 import com.humanify.expertconnect.view.compat.MaterialButton;
 
 public class SampleActivity extends AppCompatActivity implements Holdr_ActivitySample.Listener {
@@ -146,39 +141,6 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
         }
     };
 
-    LoaderManager.LoaderCallbacks<ApiResult<AgentAvailabilityResponse>> agentAvailabilityLoader = new LoaderManager.LoaderCallbacks<ApiResult<AgentAvailabilityResponse>>() {
-        private String currentSkill;
-
-        @Override
-        public Loader<ApiResult<AgentAvailabilityResponse>> onCreateLoader(int id, Bundle args) {
-            currentSkill = args.getString("skill");
-            return api.getAgentAvilabilityOnSkill(currentSkill);
-        }
-
-        @Override
-        public void onLoadFinished(Loader<ApiResult<AgentAvailabilityResponse>> loader, ApiResult<AgentAvailabilityResponse> data) {
-            AgentAvailabilityResponse agentAvailResp = data.get();
-            String message = "No Agents available for "+currentSkill;
-
-            if(agentAvailResp.getCount()>0){
-                for (SkillStatus skillStatus : agentAvailResp.getSkillsList()) {
-                    if (skillStatus != null && skillStatus.getSkillName().equals(currentSkill)) {
-                        int agentCount = skillStatus.getAgentsLoggedOn();
-                        message = skillStatus.getSkillName()+" - "+ agentCount
-                                + (agentCount > 1 ? " agents are " : " agent is ") +(skillStatus.isOpen()?"open":"close");
-                    }
-                }
-            }
-            Toast.makeText(SampleActivity.this, message, Toast.LENGTH_LONG).show();
-        }
-
-        @Override
-        public void onLoaderReset(Loader<ApiResult<AgentAvailabilityResponse>> loader) {
-
-        }
-    };
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -199,10 +161,6 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
 
         setSupportActionBar(holdr.toolbar);
         getSupportActionBar().setTitle(getString(R.string.humanify));
-
-        Bundle args = new Bundle();
-        args.putString("skill", DEMO_SKILL);
-        getSupportLoaderManager().initLoader(1, args, agentAvailabilityLoader);
 
         api.registerForSDKNotifications(notificationReceiver);
 
