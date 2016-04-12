@@ -17,7 +17,7 @@ public class MainApplication extends Application {
     public static final String API_ENDPOINT = "http://api.ce03.humanify.com";
     public static final String TOKEN = "";      // YOUR TOKEN GOES HERE
     public static final String CLIENT_ID = "";  // YOUR CLIENT_ID GOES HERE
-    
+
     public static final String USER_ID = "Guest";
     public static final String USER_NAME = "Guest";
 
