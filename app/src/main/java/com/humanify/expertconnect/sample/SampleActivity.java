@@ -42,8 +42,6 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
     private int noAnswerCount = 0;
     private static final int MAX_NO_ANSWER_COUNT = 2;
 
-    boolean highLevelChatActive = false;
-
     private ApiBroadcastReceiver<ParcelableMap> decisionReceiver = new ApiBroadcastReceiver<ParcelableMap>(){
 
         @Override
@@ -177,7 +175,7 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
     @Override
     protected void onResume() {
         super.onResume();
-        if(highLevelChatActive && expertConnect.isChatActive()) {
+        if(expertConnect.isChatActive()) {
             holdr.startChat.setText(R.string.continue_chat);
         }
         if(expertConnect.isCallbackActive()) {
@@ -209,7 +207,6 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
 
     @Override
     public void onStartChatClick(MaterialButton startChat) {
-        highLevelChatActive = true;
         api.startChat(DEMO_SKILL, null);
     }
 
@@ -313,7 +310,7 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
     }
 
     private void handleChatLeftWithoutEnding(ExpertConnectNotification notification) {
-        if(highLevelChatActive && expertConnect.isChatActive()) {
+        if(expertConnect.isChatActive() && holdr.startChat.getText().toString().equals(getString(R.string.start_chat))) {
             holdr.startChat.setText(R.string.continue_chat);
         }
     }
@@ -374,7 +371,7 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
             .registerGetConversationEvent(receiverConversationEvent = new ApiBroadcastReceiver<ConversationEvent>() {
                 @Override
                 public void onSuccess(Context context, ConversationEvent result) {
-                    if (highLevelChatActive && expertConnect.isChatActive()) {
+                    if (holdr.startChat.getText().toString().equals(getString(R.string.start_chat)) && expertConnect.isChatActive()) {
                         holdr.startChat.setText("*" + getResources().getString(R.string.continue_chat));
                     }
                 }
