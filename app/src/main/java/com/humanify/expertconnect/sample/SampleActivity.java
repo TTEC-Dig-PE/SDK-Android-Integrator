@@ -3,6 +3,8 @@ package com.humanify.expertconnect.sample;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -21,6 +23,7 @@ import com.humanify.expertconnect.api.model.JourneyResponse;
 import com.humanify.expertconnect.api.model.ParcelableMap;
 import com.humanify.expertconnect.api.model.breadcrumbs.BreadcrumbsAction;
 import com.humanify.expertconnect.api.model.breadcrumbs.BreadcrumbsSession;
+import com.humanify.expertconnect.api.model.breadcrumbs.GeoLocation;
 import com.humanify.expertconnect.api.model.conversationengine.ConversationEvent;
 import com.humanify.expertconnect.sample.holdr.Holdr_ActivitySample;
 import com.humanify.expertconnect.view.compat.MaterialButton;
@@ -106,7 +109,7 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
         public void onSuccess(Context context, BreadcrumbsSession result) {
             expertConnect.setBreadcrumbsSessionId(result.getSessionId());
 
-            breadcrumbsAction(context,
+            breadcrumbsAction(
                     "Initialize",
                     "Application Journey Initialization",
                     "CreateJourney",
@@ -248,7 +251,7 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
     @Override
     public void onSendBreadcrumbClick(MaterialButton startForm) {
         interactionsCount++;
-        breadcrumbsAction(this,
+        breadcrumbsAction(
                 "User interaction count",
                 Integer.toString(interactionsCount),
                 "HumanifyDemo-SampleActivity",
@@ -328,23 +331,63 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
         api.breadcrumbsSession(breadcrumbsSession);
     }
 
-    private void breadcrumbsAction(Context context,
-                                  String actionType,
+    private void breadcrumbsAction(String actionType,
                                   String actionDescription,
                                   String actionSource,
                                   String actionDestination) {
-
-        BreadcrumbsAction breadcrumbsAction = expertConnect.newBreadcrumbsAction();
+        BreadcrumbsAction breadcrumbsAction = new BreadcrumbsAction();
 
         breadcrumbsAction.setJourneyId(expertConnect.getIdentityManager().getJourneyId());
         breadcrumbsAction.setSessionId(expertConnect.getBreadcrumbsSessionId());
         breadcrumbsAction.setTenantId(expertConnect.getOrganization());
+        breadcrumbsAction.setUserId(expertConnect.getIdentityManager().getUserId());
+
         breadcrumbsAction.setActionType(actionType);
         breadcrumbsAction.setActionDescription(actionDescription);
         breadcrumbsAction.setActionSource(actionSource);
         breadcrumbsAction.setActionDestination(actionDestination);
 
         api.breadcrumbsAction(breadcrumbsAction);
+    }
+
+
+    private void breadcrumbsActionWithLocation(String actionType,
+                                               String actionDescription,
+                                               String actionSource,
+                                               String actionDestination) {
+        BreadcrumbsAction breadcrumbsAction = new BreadcrumbsAction();
+
+        breadcrumbsAction.setJourneyId(expertConnect.getIdentityManager().getJourneyId());
+        breadcrumbsAction.setSessionId(expertConnect.getBreadcrumbsSessionId());
+        breadcrumbsAction.setTenantId(expertConnect.getOrganization());
+        breadcrumbsAction.setUserId(expertConnect.getIdentityManager().getUserId());
+
+        breadcrumbsAction.setActionType(actionType);
+        breadcrumbsAction.setActionDescription(actionDescription);
+        breadcrumbsAction.setActionSource(actionSource);
+        breadcrumbsAction.setActionDestination(actionDestination);
+
+        breadcrumbsAction.setGeoLocation(getGeoLocation());
+
+        api.breadcrumbsAction(breadcrumbsAction);
+    }
+
+    private GeoLocation getGeoLocation() {
+        LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        try {
+            Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if (location != null) {
+                GeoLocation geoLocation = new GeoLocation(location.getLatitude(), location.getLongitude());
+                geoLocation.setAltitude(location.getAltitude());
+                geoLocation.setSpeed(location.getSpeed());
+                geoLocation.setHorizontalAccuracy(location.getAccuracy());
+                geoLocation.setVerticalAccuracy(location.getAccuracy());
+                return geoLocation;
+            }
+        } catch (SecurityException se) {
+            // ignore
+        }
+        return null;
     }
 
     private void showAccessTokenMissingDialog() {
