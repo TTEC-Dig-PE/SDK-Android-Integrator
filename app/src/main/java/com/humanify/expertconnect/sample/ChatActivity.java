@@ -30,7 +30,6 @@ import com.humanify.expertconnect.api.ApiBroadcastReceiver;
 import com.humanify.expertconnect.api.ApiException;
 import com.humanify.expertconnect.api.ExpertConnectApiProxy;
 import com.humanify.expertconnect.api.IdentityManager;
-import com.humanify.expertconnect.api.model.SkillDetail;
 import com.humanify.expertconnect.api.model.action.AnswerEngineAction;
 import com.humanify.expertconnect.api.model.answerengine.AnswerEngineRequest;
 import com.humanify.expertconnect.api.model.answerengine.AnswerEngineResponse;
@@ -53,6 +52,7 @@ import com.humanify.expertconnect.api.model.conversationengine.RenderUrlCommand;
 import com.humanify.expertconnect.api.model.conversationengine.SendQuestionCommand;
 import com.humanify.expertconnect.api.model.conversationengine.StatusMessage;
 import com.humanify.expertconnect.api.model.conversationengine.TextMessage;
+import com.humanify.expertconnect.api.model.experts.SkillDetail;
 import com.humanify.expertconnect.sample.holdr.Holdr_ActivityChat;
 import com.humanify.expertconnect.util.ApiResult;
 import com.humanify.expertconnect.view.compat.MaterialIconButton;
@@ -394,8 +394,8 @@ public class ChatActivity extends AppCompatActivity implements Holdr_ActivityCha
         public void onLoadFinished(Loader<ApiResult<SkillDetail>> loader, ApiResult<SkillDetail> data) {
             try {
                 SkillDetail skillDetail = data.get();
-                estimatedWaitTime = (skillDetail.getEstimatedWait() < 0 ? skillDetail.getEstimatedWait() : (int) Math.round(skillDetail.getEstimatedWait() / 60.0));
-                if (skillDetail.getAgentsLoggedOn() == 0) {
+                estimatedWaitTime = (skillDetail.getEstWait() < 0 ? skillDetail.getEstWait() : (int) Math.round(skillDetail.getEstWait() / 60.0));
+                if (skillDetail.getChatReady() == 0) {
                     // error - show dialog and finish activity
                 } else {
                     // connect

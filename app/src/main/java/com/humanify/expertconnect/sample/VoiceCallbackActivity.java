@@ -23,11 +23,11 @@ import com.humanify.expertconnect.api.ApiBroadcastReceiver;
 import com.humanify.expertconnect.api.ApiException;
 import com.humanify.expertconnect.api.EmptyApiBroadcastReceiver;
 import com.humanify.expertconnect.api.ExpertConnectApiProxy;
-import com.humanify.expertconnect.api.model.SkillDetail;
 import com.humanify.expertconnect.api.model.conversationengine.Channel;
 import com.humanify.expertconnect.api.model.conversationengine.ChannelRequest;
 import com.humanify.expertconnect.api.model.conversationengine.ChannelState;
 import com.humanify.expertconnect.api.model.conversationengine.ConversationEvent;
+import com.humanify.expertconnect.api.model.experts.SkillDetail;
 import com.humanify.expertconnect.sample.holdr.Holdr_ActivityVoicecallback;
 import com.humanify.expertconnect.util.ApiResult;
 import com.humanify.expertconnect.view.compat.MaterialButton;
@@ -237,11 +237,9 @@ public class VoiceCallbackActivity extends AppCompatActivity implements Holdr_Ac
         public void onLoadFinished(Loader<ApiResult<SkillDetail>> loader, ApiResult<SkillDetail> data) {
             try {
                 SkillDetail skillDetail = data.get();
-                estimatedWaitTime = (skillDetail.getEstimatedWait() < 0 ? skillDetail.getEstimatedWait() : (int) Math.round(skillDetail.getEstimatedWait() / 60.0));
+                estimatedWaitTime = (skillDetail.getEstWait() < 0 ? skillDetail.getEstWait() : (int) Math.round(skillDetail.getEstWait() / 60.0));
                 holdr.estimatedWaitTime.setText(getResources().getQuantityString(R.plurals.agents_wait_time, estimatedWaitTime, estimatedWaitTime));
-
-                holdr.estimatedWaitTime.setText(getWaitMessage(estimatedWaitTime, skillDetail.getVoiceAvailability()));
-
+                holdr.estimatedWaitTime.setText(getWaitMessage(estimatedWaitTime, skillDetail.getVoiceReady()));
             } catch (ApiException e) {
                 Log.i(TAG, e.getUserMessage(getResources()));
             }
