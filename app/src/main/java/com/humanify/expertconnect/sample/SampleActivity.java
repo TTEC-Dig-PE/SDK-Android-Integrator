@@ -32,7 +32,7 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
 
     private static String DEMO_ANSWER_ENGINE = "Park";
     private static String DEMO_SKILL = "CE_Mobile_Chat";
-    private static String DEMO_FORM = "agentperformance";
+    private static String DEMO_FORM = "AgentPerformance";
 
     private Holdr_ActivitySample holdr;
 
