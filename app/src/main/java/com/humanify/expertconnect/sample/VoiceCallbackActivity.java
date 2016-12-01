@@ -229,7 +229,7 @@ public class VoiceCallbackActivity extends AppCompatActivity implements Holdr_Ac
         public Loader<ApiResult<SkillDetail>> onCreateLoader(int id, Bundle args) {
             currentSkill = args.getString("skill");
             Loader<ApiResult<SkillDetail>> loader = null;
-            loader = api.getDetailsForSkill(currentSkill);
+            loader = api.getDetailsForExpertSkill(currentSkill);
             return loader;
         }
 
