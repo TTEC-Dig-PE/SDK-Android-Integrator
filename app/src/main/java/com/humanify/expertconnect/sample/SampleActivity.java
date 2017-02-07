@@ -87,7 +87,6 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
             IdentityManager identityManager = ExpertConnect.getInstance(context).getIdentityManager();
             String journeyId = result.getId();
             identityManager.setJourneyId(journeyId);
-            ExpertConnect.getInstance(context).setOrganization(result.getOrganization());
             breadcrumbsSession(context);
         }
 
@@ -347,7 +346,7 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
         breadcrumbsAction.setActionSource(actionSource);
         breadcrumbsAction.setActionDestination(actionDestination);
 
-        api.breadcrumbsAction(breadcrumbsAction);
+        api.breadcrumbSendOne(breadcrumbsAction);
     }
 
     private void showAccessTokenMissingDialog() {

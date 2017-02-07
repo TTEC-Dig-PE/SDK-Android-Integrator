@@ -15,11 +15,7 @@ import java.io.IOException;
 public class MainApplication extends Application {
 
     public static final String API_ENDPOINT = "http://api.ce03.humanify.com";
-    public static final String TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodW1hbmlmeS5jb20iLCJpYXQiOjE0NTYxNzQzMTMsImV4cCI6MTQ4NzcxMDMxNywiYXVkIjoic2VydmljZXMuY3guZm9yZC5jb20uaWRlbnRpdHlEZWxlZ2F0ZSIsInN1YiI6ImtlbkBmb3JkLmNvbSIsImFwaUtleSI6IjgwMjA1N2ZmOWI1YjRlYjdmYmI4ODU2YjZlYjJjYzViIiwiY2xpZW50X2lkIjoiaGVucnkifQ.H2OhXg9WQPg20pvxe9t5mIpkeWsDp6xyjIKp79V7YOU";      // YOUR TOKEN GOES HERE
-    public static final String CLIENT_ID = "henry";  // YOUR CLIENT_ID GOES HERE
-    
-    public static final String USER_ID = "Guest";
-    public static final String USER_NAME = "Guest";
+    public static final String TOKEN = "";          // YOUR TOKEN GOES HERE
 
     // breadcrumb configuration
     public static final int CACHE_COUNT = 3;
@@ -34,8 +30,6 @@ public class MainApplication extends Application {
 
     private void configureWithUserToken(String userToken) {
         final ExpertConnect expertConnect = ExpertConnect.getInstance(this);
-        expertConnect.setClientId(MainApplication.CLIENT_ID);
-        expertConnect.setUserName(USER_NAME);
 
         if (!TextUtils.isEmpty(userToken)) {
             // *********************************** Static User Token ***********************************;
@@ -55,24 +49,24 @@ public class MainApplication extends Application {
                 .setTokenProvider(new ExpertConnectConfig.TokenProvider() {
                     @Override
                     public String token() {
-                    String token = getUserSessionToken();
-                    if (!TextUtils.isEmpty(token)) {
-                        return token;
-                    }
-                    return null;
+                        String token = getUserSessionToken();
+                        if (!TextUtils.isEmpty(token)) {
+                            return token;
+                        }
+                        return null;
                     }
                 }));
         }
     }
 
     private String getUserSessionToken() {
-        final ExpertConnect expertConnect = ExpertConnect.getInstance(this);
-        String userId = expertConnect.getIdentityManager().getUserId();
+        final String TOKEN_PROVIDER_ENDPOINT = "Your TOKEN_PROVIDER_ENDPOINT goes here";
+        final String TOKEN_PROVIDER_PATH = "Your TOKEN_PROVIDER_PATH goes here";
+        final String USER_ID = "Your USER_ID goes here";
 
-        String newAuthUrl = Uri.parse(expertConnect.getEndPoint()).buildUpon()
-                .appendEncodedPath("authServerProxy/v1/tokens/ust")
-                .appendQueryParameter("client_id", expertConnect.getIdentityManager().getClientId())
-                .appendQueryParameter("username", (userId == null ? USER_ID : userId))
+        String newAuthUrl = Uri.parse(TOKEN_PROVIDER_ENDPOINT).buildUpon()
+                .appendEncodedPath(TOKEN_PROVIDER_PATH)
+                .appendQueryParameter("username", USER_ID)
                 .toString();
 
         Request newAuthRequest = new Request.Builder()
