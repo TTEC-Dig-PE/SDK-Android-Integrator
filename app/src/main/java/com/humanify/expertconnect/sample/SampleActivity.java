@@ -32,7 +32,7 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
 
     private static String DEMO_ANSWER_ENGINE = "Park";
     private static String DEMO_SKILL = "CE_Mobile_Chat";
-    private static String DEMO_FORM = "AgentPerformance";
+    private static String DEMO_FORM = "rate_agent_form";
 
     private Holdr_ActivitySample holdr;
 
@@ -260,9 +260,10 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
     @Override
     public void onMakeDecisionClick(MaterialButton startForm) {
         ParcelableMap decisionDict = new ParcelableMap();
-        decisionDict.put("name", "Henry Ford");
-        decisionDict.put("ceTenant", "henry");
-        decisionDict.put("eventId", "sayHello");
+        decisionDict.put("tenantId", "sce1_ops");
+        decisionDict.put("projectServiceName", "HuSimple");
+        decisionDict.put("eventId", "validateDE");
+        decisionDict.put("inputString", "hello world");
 
         api.postDecisionData(decisionDict);
     }

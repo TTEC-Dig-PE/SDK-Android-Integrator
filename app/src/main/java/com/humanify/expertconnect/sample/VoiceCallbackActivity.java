@@ -15,6 +15,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -229,7 +230,7 @@ public class VoiceCallbackActivity extends AppCompatActivity implements Holdr_Ac
         public Loader<ApiResult<SkillDetail>> onCreateLoader(int id, Bundle args) {
             currentSkill = args.getString("skill");
             Loader<ApiResult<SkillDetail>> loader = null;
-            loader = api.getDetailsForSkill(currentSkill);
+            loader = api.getDetailsForExpertSkill(currentSkill);
             return loader;
         }
 
@@ -253,27 +254,14 @@ public class VoiceCallbackActivity extends AppCompatActivity implements Holdr_Ac
 
     private String getWaitMessage(int estimatedWaitTIme, int agentsAvailable) {
         String waitMessage = "";
-        String message = "";
-        if (estimatedWaitTIme < 0) {
-        } else if (estimatedWaitTIme == 0) {
-            message = getResources().getQuantityString(R.plurals.agents_wait_time, 1, 1);
-        } else if (estimatedWaitTIme <= WAIT_TIME) {
-            message = getResources().getQuantityString(R.plurals.agents_wait_time, estimatedWaitTIme + 1, estimatedWaitTIme + 1);
-        } else if (estimatedWaitTIme > WAIT_TIME) {
-            message = getResources().getString(R.string.wait_time_greater_than_five, WAIT_TIME);
-        }
 
-        if (!TextUtils.isEmpty(message)) {
-            waitMessage += message;
+        if(estimatedWaitTIme < 0 || (estimatedWaitTIme == 0 && agentsAvailable == 0)){
+            holdr.estimatedWaitTimeLabel.setVisibility(View.GONE);
+            waitMessage = getString(R.string.no_agents_available);
         }
-
-        message = getString(R.string.no_agents_available);
-        if (agentsAvailable > 0) {
-            message = getResources().getQuantityString(R.plurals.agents_available, agentsAvailable, agentsAvailable);
-        }
-
-        if (!TextUtils.isEmpty(message)) {
-            waitMessage += (TextUtils.isEmpty(waitMessage) ? "" : "\n") + message;
+        else{
+            holdr.estimatedWaitTimeLabel.setVisibility(View.VISIBLE);
+            waitMessage = getResources().getQuantityString(R.plurals.agents_wait_time, estimatedWaitTIme, estimatedWaitTIme);
         }
 
         return waitMessage;
