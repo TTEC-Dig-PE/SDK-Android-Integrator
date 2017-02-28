@@ -260,9 +260,10 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
     @Override
     public void onMakeDecisionClick(MaterialButton startForm) {
         ParcelableMap decisionDict = new ParcelableMap();
-        decisionDict.put("name", "Henry Ford");
-        decisionDict.put("ceTenant", "henry");
-        decisionDict.put("eventId", "sayHello");
+        decisionDict.put("tenantId", "sce1_ops");
+        decisionDict.put("projectServiceName", "HuSimple");
+        decisionDict.put("eventId", "validateDE");
+        decisionDict.put("inputString", "hello world");
 
         api.postDecisionData(decisionDict);
     }

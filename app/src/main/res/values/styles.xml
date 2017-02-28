@@ -13,7 +13,7 @@
         <item name="expertconnect_theme">@style/AppTheme.ExpertConnect</item>
 
         <!-- ExpertConnect Custom Attributes -->
-        <item name="expertconnect_showChatAvatar">false</item>
+        <item name="expertconnect_showChatAvatar">true</item>
         <item name="expertconnect_showChatPhotoUploadButton">false</item>
         <!-- ExpertConnect Custom Attributes -->
 

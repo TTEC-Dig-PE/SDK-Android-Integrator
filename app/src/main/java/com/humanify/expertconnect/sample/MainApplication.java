@@ -14,7 +14,7 @@ import java.io.IOException;
 
 public class MainApplication extends Application {
 
-    public static final String API_ENDPOINT = "http://api.ce03.humanify.com";
+    public static final String API_ENDPOINT = "https://api.ce03.humanify.com";
     public static final String TOKEN = "";          // YOUR TOKEN GOES HERE
 
     // breadcrumb configuration
