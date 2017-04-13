@@ -25,6 +25,10 @@ import com.humanify.expertconnect.api.model.conversationengine.ConversationEvent
 import com.humanify.expertconnect.sample.holdr.Holdr_ActivitySample;
 import com.humanify.expertconnect.view.compat.MaterialButton;
 
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+
 public class SampleActivity extends AppCompatActivity implements Holdr_ActivitySample.Listener {
 
     private static String USER_NAME = "Humanify Demo";
@@ -44,7 +48,7 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
 
     boolean highLevelChatActive = false;
 
-    private ApiBroadcastReceiver<ParcelableMap> decisionReceiver = new ApiBroadcastReceiver<ParcelableMap>(){
+    /*private ApiBroadcastReceiver<ParcelableMap> decisionReceiver = new ApiBroadcastReceiver<ParcelableMap>(){
 
         @Override
         public void onSuccess(Context context, ParcelableMap result) {
@@ -57,7 +61,7 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
         public void onError(Context context, ApiException error) {
             Log.d("Retrofit_decision", error.getMessage());
         }
-    };
+    };*/
 
     ApiBroadcastReceiver<ExpertConnectNotification> notificationReceiver = new ApiBroadcastReceiver<ExpertConnectNotification>() {
         @Override
@@ -96,7 +100,7 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
         }
     };
 
-    ApiBroadcastReceiver<BreadcrumbsSession> breadcrumbsSessionReceiver = new ApiBroadcastReceiver<BreadcrumbsSession>() {
+    /*ApiBroadcastReceiver<BreadcrumbsSession> breadcrumbsSessionReceiver = new ApiBroadcastReceiver<BreadcrumbsSession>() {
 
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -118,9 +122,9 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
         public void onError(Context context, ApiException error) {
             Toast.makeText(context, error.getUserMessage(getResources()), Toast.LENGTH_SHORT).show();
         }
-    };
+    };*/
 
-    ApiBroadcastReceiver<BreadcrumbsAction> breadcrumbsActionReceiver = new ApiBroadcastReceiver<BreadcrumbsAction>() {
+    /*ApiBroadcastReceiver<BreadcrumbsAction> breadcrumbsActionReceiver = new ApiBroadcastReceiver<BreadcrumbsAction>() {
 
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -138,7 +142,7 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
         public void onError(Context context, ApiException error) {
             Toast.makeText(context, error.getUserMessage(getResources()), Toast.LENGTH_SHORT).show();
         }
-    };
+    };*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -189,10 +193,10 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
         super.onStart();
 
         // register
-        api.registerPostDecisionData(decisionReceiver);
+        //api.registerPostDecisionData(decisionReceiver);
         api.registerCreateJourney(journeyReceiver);
-        api.registerBreadcrumbsSession(breadcrumbsSessionReceiver);
-        api.registerBreadcrumbsAction(breadcrumbsActionReceiver);
+        //api.registerBreadcrumbsSession(breadcrumbsSessionReceiver);
+        //api.registerBreadcrumbsAction(breadcrumbsActionReceiver);
     }
 
     @Override
@@ -200,10 +204,10 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
         super.onStop();
 
         // unregister
-        api.unregister(decisionReceiver);
+        //api.unregister(decisionReceiver);
         api.unregister(journeyReceiver);
-        api.unregister(breadcrumbsSessionReceiver);
-        api.unregister(breadcrumbsActionReceiver);
+        //api.unregister(breadcrumbsSessionReceiver);
+        //api.unregister(breadcrumbsActionReceiver);
     }
 
     @Override
@@ -265,7 +269,19 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
         decisionDict.put("eventId", "validateDE");
         decisionDict.put("inputString", "hello world");
 
-        api.postDecisionData(decisionDict);
+        api.postDecisionData(decisionDict, new Callback<ParcelableMap>() {
+            @Override
+            public void success(ParcelableMap result, Response response) {
+                Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                String responseData = gson.toJson(result);
+                holdr.message.setText(responseData);
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Log.d("Retrofit_decision", error.getMessage());
+            }
+        });
     }
 
     private void handleAllNotifications(ExpertConnectNotification notification) {
@@ -318,7 +334,7 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
         }
     }
 
-    private void breadcrumbsSession(Context context) {
+    private void breadcrumbsSession(final Context context) {
 
         if(expertConnect.getIdentityManager().getJourneyId() == null)
             return;
@@ -328,14 +344,31 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
         breadcrumbsSession.setJourneyId(expertConnect.getIdentityManager().getJourneyId());
         breadcrumbsSession.setTenantId(expertConnect.getOrganization());
 
-        api.breadcrumbsSession(breadcrumbsSession);
+        api.breadcrumbsSession(breadcrumbsSession, new Callback<BreadcrumbsSession>() {
+            @Override
+            public void success(BreadcrumbsSession result, Response response) {
+                expertConnect.setBreadcrumbsSessionId(result.getSessionId());
+
+                breadcrumbsAction(context,
+                        "Initialize",
+                        "Application Journey Initialization",
+                        "CreateJourney",
+                        "NA");
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                ApiException apiException = new ApiException(error);
+                Toast.makeText(context, apiException.getUserMessage(getResources()), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
-    private void breadcrumbsAction(Context context,
-                                  String actionType,
-                                  String actionDescription,
-                                  String actionSource,
-                                  String actionDestination) {
+    private void breadcrumbsAction(final Context context,
+                                   String actionType,
+                                   String actionDescription,
+                                   String actionSource,
+                                   String actionDestination) {
 
         BreadcrumbsAction breadcrumbsAction = expertConnect.newBreadcrumbsAction();
 
@@ -347,7 +380,20 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
         breadcrumbsAction.setActionSource(actionSource);
         breadcrumbsAction.setActionDestination(actionDestination);
 
-        api.breadcrumbSendOne(breadcrumbsAction);
+        api.breadcrumbSendOne(breadcrumbsAction, new Callback<BreadcrumbsAction>() {
+            @Override
+            public void success(BreadcrumbsAction result, Response response) {
+                Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                String responseData =  "Breadcrumb Action Sent\n" + gson.toJson(result) + "\n";
+                holdr.message.setText(responseData);
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                ApiException apiException = new ApiException(error);
+                Toast.makeText(context, apiException.getUserMessage(getResources()), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void showAccessTokenMissingDialog() {
