@@ -3,19 +3,27 @@ package com.humanify.expertconnect.sample;
 import android.app.Application;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.humanify.expertconnect.ExpertConnect;
 import com.humanify.expertconnect.ExpertConnectConfig;
+import com.humanify.expertconnect.ExpertConnectLog;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
 import java.io.IOException;
 
+import static com.humanify.expertconnect.ExpertConnectLog.ExpertConnectLogLevelDebug;
+import static com.humanify.expertconnect.ExpertConnectLog.ExpertConnectLogLevelError;
+import static com.humanify.expertconnect.ExpertConnectLog.ExpertConnectLogLevelNone;
+import static com.humanify.expertconnect.ExpertConnectLog.ExpertConnectLogLevelVerbose;
+import static com.humanify.expertconnect.ExpertConnectLog.ExpertConnectLogLevelWarning;
+
 public class MainApplication extends Application {
 
-    public static final String API_ENDPOINT = "https://api.ce03.humanify.com";
-    public static final String TOKEN = "";          // YOUR TOKEN GOES HERE
+    public static final String API_ENDPOINT = "https://api.dce1.humanify.com";
+    public static final String TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJiYWxhamkubW9oYW5AYWdpbGl6dGVjaC5jb20iLCJhdWQiOiJta3R3ZWJleHRjLmNvbS5pZGVudGl0eURlbGVnYXRlIiwiYXBpS2V5IjoiZmU1MzEzMmU1MmI0NDNlNWIxOWQzMTQyYmY2MzBiY2UiLCJpc3MiOiJodW1hbmlmeS5jb20iLCJleHAiOjE0OTIwOTE4NzEsImlhdCI6MTQ5MjA5MTIxMSwiY2xpZW50X2lkIjoibWt0d2ViZXh0YyJ9.4zN3Kwm1Vt0TXeUwSCI_K69gS64v9ZF39B2RYphfgJ0";          // YOUR TOKEN GOES HERE
 
     // breadcrumb configuration
     public static final int CACHE_COUNT = 3;
@@ -57,6 +65,22 @@ public class MainApplication extends Application {
                     }
                 }));
         }
+
+        expertConnect.setDebugLevel(ExpertConnectLog.ExpertConnectLogLevelVerbose);
+        expertConnect.setLoggingCallback(new ExpertConnect.LoggingCallback() {
+            @Override
+            public void getLog(int logLevel, String tag, String message, Throwable tr) {
+                String levelString = getLogLevel(logLevel);
+                if (levelString != null) {
+                    String TAG = String.format("[Android SDK - %s : %s]", levelString, tag);
+                    if (tr != null) {
+                        Log.i(TAG, message, tr);
+                    } else {
+                        Log.i(TAG, message);
+                    }
+                }
+            }
+        });
     }
 
     private String getUserSessionToken() {
@@ -86,5 +110,22 @@ public class MainApplication extends Application {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public String getLogLevel(int logLevel) {
+        switch (logLevel) {
+            case ExpertConnectLogLevelError:
+                return "Error";
+            case ExpertConnectLogLevelWarning:
+                return "Warning";
+            case ExpertConnectLogLevelDebug:
+                return "Debug";
+            case ExpertConnectLogLevelVerbose:
+                return "Info";
+            case ExpertConnectLogLevelNone:
+                return "None";
+            default:
+                return null;
+        }
     }
 }
