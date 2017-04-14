@@ -22,8 +22,8 @@ import static com.humanify.expertconnect.ExpertConnectLog.ExpertConnectLogLevelW
 
 public class MainApplication extends Application {
 
-    public static final String API_ENDPOINT = "https://api.dce1.humanify.com";
-    public static final String TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJiYWxhamkubW9oYW5AYWdpbGl6dGVjaC5jb20iLCJhdWQiOiJta3R3ZWJleHRjLmNvbS5pZGVudGl0eURlbGVnYXRlIiwiYXBpS2V5IjoiZmU1MzEzMmU1MmI0NDNlNWIxOWQzMTQyYmY2MzBiY2UiLCJpc3MiOiJodW1hbmlmeS5jb20iLCJleHAiOjE0OTIwOTE4NzEsImlhdCI6MTQ5MjA5MTIxMSwiY2xpZW50X2lkIjoibWt0d2ViZXh0YyJ9.4zN3Kwm1Vt0TXeUwSCI_K69gS64v9ZF39B2RYphfgJ0";          // YOUR TOKEN GOES HERE
+    public static final String API_ENDPOINT = "https://api.ce03.humanify.com";
+    public static final String TOKEN = "";          // YOUR TOKEN GOES HERE
 
     // breadcrumb configuration
     public static final int CACHE_COUNT = 3;
