@@ -3,14 +3,22 @@ package com.humanify.expertconnect.sample;
 import android.app.Application;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.humanify.expertconnect.ExpertConnect;
 import com.humanify.expertconnect.ExpertConnectConfig;
+import com.humanify.expertconnect.ExpertConnectLog;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
 import java.io.IOException;
+
+import static com.humanify.expertconnect.ExpertConnectLog.ExpertConnectLogLevelDebug;
+import static com.humanify.expertconnect.ExpertConnectLog.ExpertConnectLogLevelError;
+import static com.humanify.expertconnect.ExpertConnectLog.ExpertConnectLogLevelNone;
+import static com.humanify.expertconnect.ExpertConnectLog.ExpertConnectLogLevelVerbose;
+import static com.humanify.expertconnect.ExpertConnectLog.ExpertConnectLogLevelWarning;
 
 public class MainApplication extends Application {
 
@@ -57,6 +65,22 @@ public class MainApplication extends Application {
                     }
                 }));
         }
+
+        expertConnect.setDebugLevel(ExpertConnectLog.ExpertConnectLogLevelVerbose);
+        expertConnect.setLoggingCallback(new ExpertConnect.LoggingCallback() {
+            @Override
+            public void getLog(int logLevel, String tag, String message, Throwable tr) {
+                String levelString = getLogLevel(logLevel);
+                if (levelString != null) {
+                    String TAG = String.format("[Android SDK - %s : %s]", levelString, tag);
+                    if (tr != null) {
+                        Log.i(TAG, message, tr);
+                    } else {
+                        Log.i(TAG, message);
+                    }
+                }
+            }
+        });
     }
 
     private String getUserSessionToken() {
@@ -86,5 +110,22 @@ public class MainApplication extends Application {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public String getLogLevel(int logLevel) {
+        switch (logLevel) {
+            case ExpertConnectLogLevelError:
+                return "Error";
+            case ExpertConnectLogLevelWarning:
+                return "Warning";
+            case ExpertConnectLogLevelDebug:
+                return "Debug";
+            case ExpertConnectLogLevelVerbose:
+                return "Info";
+            case ExpertConnectLogLevelNone:
+                return "None";
+            default:
+                return null;
+        }
     }
 }
