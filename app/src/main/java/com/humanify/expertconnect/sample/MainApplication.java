@@ -1,6 +1,7 @@
 package com.humanify.expertconnect.sample;
 
 import android.app.Application;
+import android.content.Context;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
@@ -46,24 +47,30 @@ public class MainApplication extends Application {
                     .setEndpoint(MainApplication.API_ENDPOINT)
                     .setCacheCount(CACHE_COUNT)
                     .setCacheTime(CACHE_TIME)
-                    .setUserIdentityToken(userToken));
+                    .setUserIdentityToken(userToken)
+                    .setAppName(getApplicationName(this))
+                    .setAppVersion(BuildConfig.VERSION_NAME)
+                    .setAppId(BuildConfig.APPLICATION_ID));
         } else {
             // *********************************** Token Provider ***********************************;
             expertConnect.setConfig(new ExpertConnectConfig()
-                .setMainNavigationClass(SampleActivity.class)
-                .setEndpoint(MainApplication.API_ENDPOINT)
-                .setCacheCount(CACHE_COUNT)
-                .setCacheTime(CACHE_TIME)
-                .setTokenProvider(new ExpertConnectConfig.TokenProvider() {
-                    @Override
-                    public String token() {
-                        String token = getUserSessionToken();
-                        if (!TextUtils.isEmpty(token)) {
-                            return token;
+                    .setMainNavigationClass(SampleActivity.class)
+                    .setEndpoint(MainApplication.API_ENDPOINT)
+                    .setCacheCount(CACHE_COUNT)
+                    .setCacheTime(CACHE_TIME)
+                    .setTokenProvider(new ExpertConnectConfig.TokenProvider() {
+                        @Override
+                        public String token() {
+                            String token = getUserSessionToken();
+                            if (!TextUtils.isEmpty(token)) {
+                                return token;
+                            }
+                            return null;
                         }
-                        return null;
-                    }
-                }));
+                    })
+                    .setAppName(getApplicationName(this))
+                    .setAppVersion(BuildConfig.VERSION_NAME)
+                    .setAppId(BuildConfig.APPLICATION_ID));
         }
 
         expertConnect.setDebugLevel(ExpertConnectLog.ExpertConnectLogLevelVerbose);
@@ -127,5 +134,10 @@ public class MainApplication extends Application {
             default:
                 return null;
         }
+    }
+
+    public String getApplicationName(Context context) {
+        int stringId = context.getApplicationInfo().labelRes;
+        return context.getString(stringId);
     }
 }

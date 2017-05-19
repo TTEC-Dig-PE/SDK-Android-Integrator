@@ -1,5 +1,6 @@
 package com.humanify.expertconnect.sample;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -15,6 +16,7 @@ import com.humanify.expertconnect.ExpertConnect;
 import com.humanify.expertconnect.api.ApiBroadcastReceiver;
 import com.humanify.expertconnect.api.ApiException;
 import com.humanify.expertconnect.api.ExpertConnectApiProxy;
+import com.humanify.expertconnect.api.ExpertConnectConversationApi;
 import com.humanify.expertconnect.api.IdentityManager;
 import com.humanify.expertconnect.api.model.ExpertConnectNotification;
 import com.humanify.expertconnect.api.model.JourneyResponse;
@@ -22,6 +24,8 @@ import com.humanify.expertconnect.api.model.ParcelableMap;
 import com.humanify.expertconnect.api.model.breadcrumbs.BreadcrumbsAction;
 import com.humanify.expertconnect.api.model.breadcrumbs.BreadcrumbsSession;
 import com.humanify.expertconnect.api.model.conversationengine.ConversationEvent;
+import com.humanify.expertconnect.api.model.form.Form;
+import com.humanify.expertconnect.api.model.form.FormItem;
 import com.humanify.expertconnect.sample.holdr.Holdr_ActivitySample;
 import com.humanify.expertconnect.view.compat.MaterialButton;
 
@@ -29,8 +33,9 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class SampleActivity extends AppCompatActivity implements Holdr_ActivitySample.Listener {
+public class SampleActivity extends AppCompatActivity implements Holdr_ActivitySample.Listener, ExpertConnectConversationApi.FormListener {
 
+    public final static String TAG = "SampleActivity";
     private static String USER_NAME = "Humanify Demo";
     private static String USER_ID = "demo@humanify.com";
 
@@ -150,6 +155,7 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
         setContentView(R.layout.activity_sample);
         api = ExpertConnectApiProxy.getInstance(this);
         expertConnect = ExpertConnect.getInstance(this);
+        expertConnect.setFormListener(true, this);
 
         if (/* Static Token */ !expertConnect.isUserTokenProvided() /* &&  !expertConnect.isTokenProviderAvailable() Token Provider */) {
             showAccessTokenMissingDialog();
@@ -430,5 +436,45 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
                     Log.d(getClass().getSimpleName(), error.getUserMessage(getResources()));
                 }
             });
+    }
+
+    /**
+     * Invoked when the user has navigated to the next question. This can be used to parse or react to a specific question being answered.
+     *
+     * @param context  FormActivity context returned from SDK
+     * @param formItem The form item the user just navigated away from.
+     * @param index    The index of the form item within the array of form elements.
+     */
+    @Override
+    public void answeredFormItem(Activity context, FormItem formItem, int index) {
+        Log.i(TAG, "User answered question " + index + " with answer: " + formItem.valueToText());
+    }
+
+    /**
+     * Invoked when the user has navigated forward on the last question in the form, and the form has been submitted to the Humanify server.
+     * This can be used to perform actions after a form is completed.
+     *
+     * @param context   FormActivity context returned from SDK
+     * @param form      The form object containing each form element and potentially the user's answers to each item.
+     * @param name      The form name
+     * @param exception If an error occurred submitting the form
+     */
+    @Override
+    public void submittedForm(Activity context, Form form, String name, ApiException exception) {
+        Log.i(TAG, "User submitted form " + name);
+    }
+
+    /**
+     * Invoked when the user clicks the Close button on the form submitted view. If your code contains this function, the SDK will perform no action after the user clicks close.
+     * The transitioning and navigation stack manipulation will be left up to you. This can be used to override behavior after a form is completed,
+     * such as moving straight into another high-level feature of the SDK.
+     *
+     * @param context FormActivity context returned from SDK
+     * @param form    The form object containing each form element and potentially the user's answers to each item.
+     */
+    @Override
+    public boolean closedWithForm(Activity context, Form form) {
+        Log.i(TAG, "User closed the form view.");
+        return true;
     }
 }
