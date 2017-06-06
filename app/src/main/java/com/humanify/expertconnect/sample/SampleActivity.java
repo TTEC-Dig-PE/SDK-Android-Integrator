@@ -477,4 +477,15 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
         Log.i(TAG, "User closed the form view.");
         return true;
     }
+
+    /**
+     * Invoked when user gets error while loading the form. This can be used to perform actions after a form loading error occurred.
+     *
+     * @param context   FormActivity context returned from SDK
+     * @param exception An error while loading the form
+     */
+    @Override
+    public void formErrorRaised(Activity context, ApiException exception) {
+        Log.i(TAG, "Error occurred while loading the form: " + exception);
+    }
 }
