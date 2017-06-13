@@ -15,6 +15,7 @@
         <!-- ExpertConnect Custom Attributes -->
         <item name="expertconnect_showChatAvatar">true</item>
         <item name="expertconnect_showChatPhotoUploadButton">false</item>
+        <item name="expertconnect_text_color_link">@android:color/black</item>
         <!-- ExpertConnect Custom Attributes -->
 
     </style>
