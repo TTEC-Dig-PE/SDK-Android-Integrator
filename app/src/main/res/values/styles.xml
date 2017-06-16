@@ -9,6 +9,7 @@
         <item name="colorControlActivated">@color/blue</item>
         <item name="android:buttonStyle">@style/AppStyle.Button</item>
         <item name="android:windowBackground">@color/light_gray</item>
+        <item name="alertDialogTheme">@style/AlertDialogTheme</item>
 
         <item name="expertconnect_theme">@style/AppTheme.ExpertConnect</item>
 
@@ -78,6 +79,11 @@
         <item name="android:textAppearance">@style/TextAppearance.AppCompat.Button</item>
         <item name="android:textAllCaps">false</item>
     </style>
+
+    <style name="AlertDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="colorAccent">@color/blue</item> <!-- Set the color of AlertDialog buttons -->
+    </style>
+
     <!-- Application Style -->
 
 </resources>
