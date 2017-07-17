@@ -15,8 +15,8 @@ android {
         applicationId 'com.humanify.expertconnect.sample'
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 12
-        versionName "6.0.0"
+        versionCode 13
+        versionName "6.1.0"
     }
     buildTypes {
         release {
@@ -41,7 +41,7 @@ android {
 }
 
 dependencies {
-    compile 'com.humanify.expertconnect:expertconnect:6.0.0@aar'
+    compile 'com.humanify.expertconnect:expertconnect:6.1.0@aar'
 
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support:recyclerview-v7:25.3.1'
@@ -50,8 +50,7 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp-ws:2.3.0'
     compile 'com.google.code.gson:gson:2.3'
     compile 'com.squareup.retrofit:retrofit:1.9.0'
-    // Unfortunately we can't use the latest version of picasso until https://github.com/square/picasso/issues/364 is fixed.
-    compile 'com.squareup.picasso:picasso:2.4.0'
+    compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.squareup.okhttp:okhttp-urlconnection:2.3.0'
     compile 'com.github.chrisbanes.photoview:library:1.2.3'
 
