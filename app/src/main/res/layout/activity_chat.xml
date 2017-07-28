@@ -1,97 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <LinearLayout
+    <data>
+
+        <variable
+            name="handler"
+            type="com.humanify.expertconnect.sample.ChatActivity.Handler" />
+    </data>
+
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1">
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/chat_list"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-        </FrameLayout>
+        android:layout_height="match_parent">
 
         <LinearLayout
-            android:id="@+id/send_message_container"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:splitMotionEvents="false">
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/black" />
-            <EditText
-                android:id="@+id/chat_message"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:enabled="false"
-                android:hint="@string/expertconnect_chat_hint"
-                android:imeOptions="actionSend"
-                android:inputType="textShortMessage|textAutoCorrect|textMultiLine|textCapSentences"
-                android:maxLines="4"
-                android:minHeight="48sp"
-                android:minLines="1"
-                android:paddingLeft="@dimen/expertconnect_padding"
-                android:paddingRight="@dimen/expertconnect_padding" />
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
             <FrameLayout
-                android:id="@+id/button_container"
                 android:layout_width="match_parent"
-                android:layout_height="48dp">
+                android:layout_height="0dp"
+                android:layout_weight="1">
 
-                <LinearLayout
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/chat_list"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:splitMotionEvents="false">
+                    android:layout_height="match_parent" />
 
-                    <com.humanify.expertconnect.view.compat.MaterialIconToggle
-                        android:id="@+id/attach_image"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:enabled="false"
-                        android:src="@drawable/expertconnect_ic_camera"
-                        app:holdr_onClick="true" />
-
-                    <Space
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1" />
-
-                    <com.humanify.expertconnect.view.compat.MaterialIconButton
-                        android:id="@+id/cancel"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@android:color/transparent"
-                        android:src="@drawable/expertconnect_ic_clear"
-                        android:visibility="invisible"
-                        app:holdr_onClick="true"
-                        tools:visibility="visible" />
-
-                    <com.humanify.expertconnect.view.compat.MaterialIconButton
-                        android:id="@+id/send"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@android:color/transparent"
-                        android:src="@drawable/expertconnect_ic_send"
-                        app:holdr_onClick="true" />
-                </LinearLayout>
             </FrameLayout>
 
+            <LinearLayout
+                android:id="@+id/send_message_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:splitMotionEvents="false">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/black" />
+
+                <EditText
+                    android:id="@+id/chat_message"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:enabled="false"
+                    android:hint="@string/expertconnect_chat_hint"
+                    android:imeOptions="actionSend"
+                    android:inputType="textShortMessage|textAutoCorrect|textMultiLine|textCapSentences"
+                    android:maxLines="4"
+                    android:minHeight="48sp"
+                    android:minLines="1"
+                    android:paddingLeft="@dimen/expertconnect_padding"
+                    android:paddingRight="@dimen/expertconnect_padding" />
+
+                <FrameLayout
+                    android:id="@+id/button_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:splitMotionEvents="false">
+
+                        <com.humanify.expertconnect.view.compat.MaterialIconToggle
+                            android:id="@+id/attach_image"
+                            android:onClick="@{()-> handler.onAttachImageClick(attachImage)}"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:enabled="false"
+                            android:src="@drawable/expertconnect_ic_camera" />
+
+                        <Space
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1" />
+
+                        <com.humanify.expertconnect.view.compat.MaterialIconButton
+                            android:id="@+id/cancel"
+                            android:onClick="@{()-> handler.onCancelClick(cancel)}"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@android:color/transparent"
+                            android:src="@drawable/expertconnect_ic_clear"
+                            android:visibility="invisible"
+                            tools:visibility="visible" />
+
+                        <com.humanify.expertconnect.view.compat.MaterialIconButton
+                            android:id="@+id/send"
+                            android:onClick="@{()-> handler.onSendClick(send)}"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@android:color/transparent"
+                            android:src="@drawable/expertconnect_ic_send" />
+                    </LinearLayout>
+                </FrameLayout>
+
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
-</FrameLayout>
+    </FrameLayout>
+</layout>

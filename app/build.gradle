@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'me.tatarka.holdr'
 
 repositories {
     flatDir {
@@ -15,8 +14,8 @@ android {
         applicationId 'com.humanify.expertconnect.sample'
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 13
-        versionName "6.1.0"
+        versionCode 14
+        versionName "6.2.0"
     }
     buildTypes {
         release {
@@ -38,10 +37,14 @@ android {
     }
     productFlavors {
     }
+
+    dataBinding {
+        enabled = true
+    }
 }
 
 dependencies {
-    compile 'com.humanify.expertconnect:expertconnect:6.1.0@aar'
+    compile 'com.humanify.expertconnect:expertconnect:6.2.0@aar'
 
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support:recyclerview-v7:25.3.1'

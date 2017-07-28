@@ -1,87 +1,96 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.humanify.expertconnect.sample.SampleActivity">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <LinearLayout
+    <data>
+
+        <variable
+            name="handler"
+            type="com.humanify.expertconnect.sample.VoiceCallbackActivity.Handler" />
+    </data>
+
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/toolbar"
-        android:orientation="vertical"
-        android:padding="8dp">
-
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginLeft="4dp"
-            android:gravity="center"
-            android:textStyle="bold"
-            android:textSize="16sp"
-            android:id="@+id/estimated_wait_time_label"
-            android:visibility="gone"
-            android:text="@string/estimated_wait_time"/>
-
-        <TextView
-            android:id="@+id/estimated_wait_time"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_marginLeft="4dp"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:textStyle="bold"
-            android:layout_marginLeft="4dp"
-            android:text="@string/enter_phone_label"/>
-
-        <EditText
-            android:id="@+id/phone_number"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="phone"
-            android:imeOptions="actionSend"
-            app:holdr_onEditorAction="true" />
-
+        tools:context="com.humanify.expertconnect.sample.SampleActivity">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_below="@+id/toolbar"
-            android:orientation="horizontal"
-            android:paddingTop="2dp"
-            android:paddingLeft="2dp"
-            android:paddingRight="2dp">
+            android:orientation="vertical"
+            android:padding="8dp">
 
 
-            <com.humanify.expertconnect.view.compat.MaterialButton
-                android:id="@+id/request_call"
+            <TextView
+                android:id="@+id/estimated_wait_time_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/request_callback"
-                app:holdr_onClick="true" />
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="16dp"
+                android:gravity="center"
+                android:text="@string/estimated_wait_time"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/estimated_wait_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:gravity="center" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/enter_phone_label"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/phone_number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionSend"
+                android:inputType="phone" />
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/toolbar"
+                android:orientation="horizontal"
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp"
+                android:paddingTop="2dp">
+
+
+                <com.humanify.expertconnect.view.compat.MaterialButton
+                    android:id="@+id/request_call"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:onClick="@{()-> handler.onRequestCallClick(requestCall)}"
+                    android:text="@string/request_callback" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
-    </LinearLayout>
+        <FrameLayout
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
-    <FrameLayout
-        android:id="@+id/container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <com.humanify.expertconnect.view.compat.TintProgressBar
-        android:id="@+id/loading"
-        style="@style/AppStyle.LargeProgressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_gravity="center"
-        android:visibility="gone" />
-</RelativeLayout>
+        <com.humanify.expertconnect.view.compat.TintProgressBar
+            android:id="@+id/loading"
+            style="@style/AppStyle.LargeProgressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center"
+            android:visibility="gone" />
+    </RelativeLayout>
+</layout>
