@@ -206,16 +206,7 @@ public class ChatActivity extends AppCompatActivity implements Holdr_ActivityCha
 
         messageAdapter = new MessageAdapter();
         holdr.chatList.setAdapter(messageAdapter);
-    }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
         api.registerCreateChannel(createChannelReceiver);
         api.registerGetConversationEvent(conversationEventReceiver);
 
@@ -227,13 +218,25 @@ public class ChatActivity extends AppCompatActivity implements Holdr_ActivityCha
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-
+    protected void onDestroy() {
         endChat();
 
-        api.unregister(createChannelReceiver);
-        api.unregister(conversationEventReceiver);
+        if (createChannelReceiver != null)
+            api.unregister(createChannelReceiver);
+        if (conversationEventReceiver != null)
+            api.unregister(conversationEventReceiver);
+
+        super.onDestroy();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
     }
 
     @Override
