@@ -78,7 +78,7 @@ public class MainApplication extends Application {
             @Override
             public void getLog(int logLevel, String tag, String message, Throwable tr) {
                 String levelString = getLogLevel(logLevel);
-                if (levelString != null) {
+                if (levelString != null && message != null) {
                     String TAG = String.format("[Android SDK - %s : %s]", levelString, tag);
                     if (tr != null) {
                         Log.i(TAG, message, tr);
