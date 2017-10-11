@@ -15,8 +15,8 @@ android {
         applicationId 'com.humanify.expertconnect.sample'
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 15
-        versionName "6.1.2"
+        versionCode 16
+        versionName "6.2.0"
     }
     buildTypes {
         release {
@@ -41,7 +41,7 @@ android {
 }
 
 dependencies {
-    compile 'com.humanify.expertconnect:expertconnect:6.1.2@aar'
+    compile 'com.humanify.expertconnect:expertconnect:6.2.0@aar'
 
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support:recyclerview-v7:25.3.1'
