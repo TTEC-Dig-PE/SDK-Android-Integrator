@@ -219,7 +219,7 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
     @Override
     public void onStartChatClick(MaterialButton startChat) {
         highLevelChatActive = true;
-        api.startChat(DEMO_SKILL, null);
+        api.startChat(DEMO_SKILL, null, new ChatChannelOptions("Call Center High Level", "Student"));
     }
 
     @Override

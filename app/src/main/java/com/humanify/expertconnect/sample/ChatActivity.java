@@ -31,6 +31,7 @@ import com.humanify.expertconnect.api.ApiException;
 import com.humanify.expertconnect.api.ExpertConnectApiProxy;
 import com.humanify.expertconnect.api.IdentityManager;
 import com.humanify.expertconnect.api.model.action.AnswerEngineAction;
+import com.humanify.expertconnect.api.model.action.ChatAction;
 import com.humanify.expertconnect.api.model.answerengine.AnswerEngineRequest;
 import com.humanify.expertconnect.api.model.answerengine.AnswerEngineResponse;
 import com.humanify.expertconnect.api.model.conversationengine.AddParticipant;
@@ -417,7 +418,8 @@ public class ChatActivity extends AppCompatActivity implements Holdr_ActivityCha
     };
 
     private void addChannel(final String skill) {
-        ChannelRequest channelRequest = new ChannelRequest.Builder(ChatActivity.this)
+        ChatAction chatAction = ChatAction.getInstance(skill, null, null, new ChatChannelOptions("Call Center Low Level", "Student"));
+        ChannelRequest channelRequest = new ChannelRequest.Builder(ChatActivity.this, chatAction)
                 .setTo(skill)
                 .setFrom(expertConnect.getUserId())
                 .setSubject("help")
