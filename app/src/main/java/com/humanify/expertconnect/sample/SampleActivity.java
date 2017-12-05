@@ -29,6 +29,8 @@ import com.humanify.expertconnect.api.model.form.FormItem;
 import com.humanify.expertconnect.sample.holdr.Holdr_ActivitySample;
 import com.humanify.expertconnect.view.compat.MaterialButton;
 
+import java.util.HashMap;
+
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -219,7 +221,14 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
     @Override
     public void onStartChatClick(MaterialButton startChat) {
         highLevelChatActive = true;
-        api.startChat(DEMO_SKILL, null, new ChatChannelOptions("Call Center High Level", "Student"));
+        //api.startChat(DEMO_SKILL, null, new ChatChannelOptions("Call Center High Level", "Student"));
+
+       /* Sending key/value pair channel options*/
+        HashMap<String, String> channelOptions = new HashMap<String, String>();
+        channelOptions.put("department", "Call Center Low Level");
+        channelOptions.put("userType", "Student");
+
+        api.startChat(DEMO_SKILL, null, channelOptions);
     }
 
     @Override

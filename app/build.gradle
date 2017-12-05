@@ -41,7 +41,7 @@ android {
 }
 
 dependencies {
-    compile 'com.humanify.expertconnect:expertconnect:6.2.2@aar'
+    compile 'com.humanify.expertconnect:expertconnect:6.3.0@aar'
 
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support:recyclerview-v7:25.3.1'

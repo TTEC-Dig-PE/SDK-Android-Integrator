@@ -60,6 +60,7 @@ import com.humanify.expertconnect.view.compat.MaterialIconButton;
 import com.humanify.expertconnect.view.compat.MaterialIconToggle;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ChatActivity extends AppCompatActivity implements Holdr_ActivityChat.Listener {
 
@@ -418,7 +419,14 @@ public class ChatActivity extends AppCompatActivity implements Holdr_ActivityCha
     };
 
     private void addChannel(final String skill) {
-        ChatAction chatAction = ChatAction.getInstance(skill, null, null, new ChatChannelOptions("Call Center Low Level", "Student"));
+        //ChatAction chatAction = ChatAction.getInstance(skill, null, null, new ChatChannelOptions("Call Center Low Level", "Student"));
+
+        /* Sending key/value pair channel options*/
+        HashMap<String, String> channelOptions = new HashMap<String, String>();
+        channelOptions.put("department", "Call Center Low Level");
+        channelOptions.put("userType", "Student");
+
+        ChatAction chatAction = ChatAction.getInstance(skill, null, null, channelOptions);
         ChannelRequest channelRequest = new ChannelRequest.Builder(ChatActivity.this, chatAction)
                 .setTo(skill)
                 .setFrom(expertConnect.getUserId())
