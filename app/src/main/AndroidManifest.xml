@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.humanify.expertconnect.sample" >
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.humanify.expertconnect.sample">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.BLUETOOTH"/>
@@ -33,6 +34,16 @@
             android:windowSoftInputMode="adjustResize">
         </activity>
 
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                tools:replace="android:resource"
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/app_provider_paths"/>
+        </provider>
     </application>
 
 </manifest>
