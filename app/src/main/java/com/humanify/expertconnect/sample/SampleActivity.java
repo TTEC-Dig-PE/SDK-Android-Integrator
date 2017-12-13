@@ -225,7 +225,7 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
 
        /* Sending key/value pair channel options*/
         HashMap<String, String> channelOptions = new HashMap<String, String>();
-        channelOptions.put("department", "Call Center Low Level");
+        channelOptions.put("department", "Call Center High Level");
         channelOptions.put("userType", "Student");
 
         api.startChat(DEMO_SKILL, null, channelOptions);
