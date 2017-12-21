@@ -227,6 +227,8 @@ public class ChatActivity extends AppCompatActivity implements Holdr_ActivityCha
         api.registerCreateChannel(createChannelReceiver);
         api.registerGetConversationEvent(conversationEventReceiver);
 
+        setEnableEntry(false);
+
         // start chat without checking agent available and then start chat
         startChat(DEMO_SKILL);
 
@@ -297,6 +299,8 @@ public class ChatActivity extends AppCompatActivity implements Holdr_ActivityCha
 
     private void setEnableEntry(boolean enable) {
         holdr.chatMessage.setEnabled(enable);
+        holdr.send.setEnabled(enable);
+        holdr.attachImage.setEnabled(enable);
     }
 
     private void handleConversationEvent(ConversationEvent result) {
@@ -526,9 +530,11 @@ public class ChatActivity extends AppCompatActivity implements Holdr_ActivityCha
     }
 
     private void selectImage() {
+        holdr.attachImage.setChecked(true);
         final CharSequence[] items = {"Take Photo", "Choose from Gallery", "Cancel"};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(ChatActivity.this);
+        builder.setCancelable(false);
         builder.setTitle("Send Image");
         builder.setItems(items, new DialogInterface.OnClickListener() {
             @Override
@@ -536,12 +542,15 @@ public class ChatActivity extends AppCompatActivity implements Holdr_ActivityCha
 
                 if (items[item].equals("Take Photo")) {
                     cameraIntent();
+                    holdr.attachImage.setChecked(false);
 
                 } else if (items[item].equals("Choose from Gallery")) {
                     galleryIntent();
+                    holdr.attachImage.setChecked(false);
 
                 } else if (items[item].equals("Cancel")) {
                     dialog.dismiss();
+                    holdr.attachImage.setChecked(false);
                 }
             }
         });
