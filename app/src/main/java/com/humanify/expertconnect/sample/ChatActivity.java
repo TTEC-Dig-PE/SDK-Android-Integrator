@@ -1,15 +1,22 @@
 package com.humanify.expertconnect.sample;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.ColorFilter;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.FileProvider;
 import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -26,9 +33,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.humanify.expertconnect.ExpertConnect;
+import com.humanify.expertconnect.ExpertConnectLog;
 import com.humanify.expertconnect.api.ApiBroadcastReceiver;
 import com.humanify.expertconnect.api.ApiException;
 import com.humanify.expertconnect.api.ExpertConnectApiProxy;
+import com.humanify.expertconnect.api.ExpertConnectConversationApi;
 import com.humanify.expertconnect.api.IdentityManager;
 import com.humanify.expertconnect.api.model.action.AnswerEngineAction;
 import com.humanify.expertconnect.api.model.action.ChatAction;
@@ -46,6 +55,7 @@ import com.humanify.expertconnect.api.model.conversationengine.ClientPDF;
 import com.humanify.expertconnect.api.model.conversationengine.ClientVideo;
 import com.humanify.expertconnect.api.model.conversationengine.ConversationEvent;
 import com.humanify.expertconnect.api.model.conversationengine.MediaMessage;
+import com.humanify.expertconnect.api.model.conversationengine.MediaUpload;
 import com.humanify.expertconnect.api.model.conversationengine.Message;
 import com.humanify.expertconnect.api.model.conversationengine.NotificationMessage;
 import com.humanify.expertconnect.api.model.conversationengine.PostSurveyEvent;
@@ -59,33 +69,39 @@ import com.humanify.expertconnect.util.ApiResult;
 import com.humanify.expertconnect.view.compat.MaterialIconButton;
 import com.humanify.expertconnect.view.compat.MaterialIconToggle;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
 
 public class ChatActivity extends AppCompatActivity implements Holdr_ActivityChat.Listener {
 
     private final static String TAG = ChatActivity.class.getSimpleName();
     private final static String DEMO_SKILL = "CE_Mobile_Chat";
 
+    private enum State {NONE, REQUESTED, CONNECTED, DISCONNECTED}
+    private State state = State.NONE;
+
+    private static final int WAIT_TIME = 5;
     private final static int LOADER_GET_ANSWERS = 1000;
     private final static int LOADER_CHECK_AGENTS = 1001;
 
-
-    private enum State {NONE, REQUESTED, CONNECTED, DISCONNECTED}
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
+    private static final int REQUEST_GALLERY_IMAGE = 2;
 
     private Holdr_ActivityChat holdr;
-
     private ExpertConnectApiProxy api;
     private ExpertConnect expertConnect;
-
     private Channel chatChannel;
-    private State state = State.NONE;
     private MessageAdapter messageAdapter;
     private boolean chatStateNotified = false;
 
-    private static final int WAIT_TIME = 5;
     private int estimatedWaitTime = -1;
-
     private ColorFilter buttonEnabledTint;
+    private Uri mediaPath;
 
     private ApiBroadcastReceiver<Channel> createChannelReceiver = new ApiBroadcastReceiver<Channel>() {
         @Override
@@ -211,6 +227,8 @@ public class ChatActivity extends AppCompatActivity implements Holdr_ActivityCha
         api.registerCreateChannel(createChannelReceiver);
         api.registerGetConversationEvent(conversationEventReceiver);
 
+        setEnableEntry(false);
+
         // start chat without checking agent available and then start chat
         startChat(DEMO_SKILL);
 
@@ -252,6 +270,7 @@ public class ChatActivity extends AppCompatActivity implements Holdr_ActivityCha
 
     @Override
     public void onAttachImageClick(MaterialIconToggle attachImage) {
+        selectImage();
     }
 
     @Override
@@ -280,6 +299,8 @@ public class ChatActivity extends AppCompatActivity implements Holdr_ActivityCha
 
     private void setEnableEntry(boolean enable) {
         holdr.chatMessage.setEnabled(enable);
+        holdr.send.setEnabled(enable);
+        holdr.attachImage.setEnabled(enable);
     }
 
     private void handleConversationEvent(ConversationEvent result) {
@@ -418,7 +439,14 @@ public class ChatActivity extends AppCompatActivity implements Holdr_ActivityCha
     };
 
     private void addChannel(final String skill) {
-        ChatAction chatAction = ChatAction.getInstance(skill, null, null, new ChatChannelOptions("Call Center Low Level", "Student"));
+        //ChatAction chatAction = ChatAction.getInstance(skill, null, null, new ChatChannelOptions("Call Center Low Level", "Student"));
+
+        /* Sending key/value pair channel options*/
+        HashMap<String, String> channelOptions = new HashMap<String, String>();
+        channelOptions.put("department", "Call Center Low Level");
+        channelOptions.put("userType", "Student");
+
+        ChatAction chatAction = ChatAction.getInstance(skill, null, null, channelOptions);
         ChannelRequest channelRequest = new ChannelRequest.Builder(ChatActivity.this, chatAction)
                 .setTo(skill)
                 .setFrom(expertConnect.getUserId())
@@ -481,6 +509,8 @@ public class ChatActivity extends AppCompatActivity implements Holdr_ActivityCha
                 }
             } else if (message instanceof StatusMessage) {
                 chatMessage = ((StatusMessage)message).getText(getResources()).toString();
+            } else if (message instanceof MediaMessage) {
+                chatMessage = "Image file sent successfully";
             }
             if (!TextUtils.isEmpty(chatMessage)) {
                 holder.textMessage.setText(chatMessage);
@@ -497,6 +527,110 @@ public class ChatActivity extends AppCompatActivity implements Holdr_ActivityCha
         public ArrayList<Message> getMessages() {
             return messages;
         }
+    }
+
+    private void selectImage() {
+        holdr.attachImage.setChecked(true);
+        final CharSequence[] items = {"Take Photo", "Choose from Gallery", "Cancel"};
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(ChatActivity.this);
+        builder.setCancelable(false);
+        builder.setTitle("Send Image");
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int item) {
+
+                if (items[item].equals("Take Photo")) {
+                    cameraIntent();
+                    holdr.attachImage.setChecked(false);
+
+                } else if (items[item].equals("Choose from Gallery")) {
+                    galleryIntent();
+                    holdr.attachImage.setChecked(false);
+
+                } else if (items[item].equals("Cancel")) {
+                    dialog.dismiss();
+                    holdr.attachImage.setChecked(false);
+                }
+            }
+        });
+        builder.show();
+    }
+
+    private void galleryIntent() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(intent, REQUEST_GALLERY_IMAGE);
+        }
+    }
+
+    private void cameraIntent() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+                ExpertConnectLog.Error("Humanify", ex.getMessage(), ex);
+                Toast.makeText(this, "Unable to create image path", Toast.LENGTH_SHORT).show();
+            }
+
+            if (photoFile != null) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    mediaPath = FileProvider.getUriForFile(this, getApplicationContext().getPackageName() + ".provider", photoFile);
+                } else {
+                    mediaPath = Uri.fromFile(photoFile);
+                }
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, mediaPath);
+                startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+            }
+        }
+    }
+
+    private File createImageFile() throws IOException {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        return image;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK && mediaPath != null) {
+            postMedia(mediaPath);
+            Toast.makeText(this, "Took picture", Toast.LENGTH_SHORT).show();
+        } else if (requestCode == REQUEST_GALLERY_IMAGE && resultCode == Activity.RESULT_OK && ((mediaPath = data.getData()) != null)) {
+            postMedia(mediaPath);
+            Toast.makeText(this, "Chose from gallery", Toast.LENGTH_SHORT).show();
+        }
+        mediaPath = null;
+    }
+
+    private void postMedia(final Uri uri){
+        expertConnect.getConversationApi().sendMedia(chatChannel,
+                new MediaUpload(chatChannel, IdentityManager.getInstance(this).getUserId(), uri),
+                new ExpertConnectConversationApi.SendListener() {
+                    @Override
+                    public void onSuccess() {
+                        appendMessage(new ClientImage(uri));
+                        Log.i(TAG, "Image file sent successfully");
+                    }
+
+                    @Override
+                    public void onError(ApiException e) {
+                        Log.e(TAG, "Image upload failed: " + e.getMessage());
+                    }
+                });
     }
 
 }
