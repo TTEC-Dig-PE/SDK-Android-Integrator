@@ -38,7 +38,7 @@ import retrofit.client.Response;
 public class SampleActivity extends AppCompatActivity implements Holdr_ActivitySample.Listener, ExpertConnectConversationApi.FormListener {
 
     public final static String TAG = "SampleActivity";
-    private static String USER_NAME = "Humanify Demo";
+    private static String USER_NAME = "demo@humanify.com";
     private static String USER_ID = "demo@humanify.com";
 
     private static String DEMO_ANSWER_ENGINE = "Park";
