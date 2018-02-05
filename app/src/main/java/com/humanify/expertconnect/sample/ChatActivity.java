@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.FileProvider;
@@ -48,6 +49,7 @@ import com.humanify.expertconnect.api.model.conversationengine.Channel;
 import com.humanify.expertconnect.api.model.conversationengine.ChannelRequest;
 import com.humanify.expertconnect.api.model.conversationengine.ChannelState;
 import com.humanify.expertconnect.api.model.conversationengine.ChannelTimeoutWarning;
+import com.humanify.expertconnect.api.model.conversationengine.ChatInfoMessage;
 import com.humanify.expertconnect.api.model.conversationengine.ChatMessage;
 import com.humanify.expertconnect.api.model.conversationengine.ChatState;
 import com.humanify.expertconnect.api.model.conversationengine.ClientImage;
@@ -66,6 +68,7 @@ import com.humanify.expertconnect.api.model.conversationengine.TextMessage;
 import com.humanify.expertconnect.api.model.experts.SkillDetail;
 import com.humanify.expertconnect.sample.holdr.Holdr_ActivityChat;
 import com.humanify.expertconnect.util.ApiResult;
+import com.humanify.expertconnect.util.NetworkConnectionMonitor;
 import com.humanify.expertconnect.view.compat.MaterialIconButton;
 import com.humanify.expertconnect.view.compat.MaterialIconToggle;
 
@@ -103,6 +106,9 @@ public class ChatActivity extends AppCompatActivity implements Holdr_ActivityCha
     private ColorFilter buttonEnabledTint;
     private Uri mediaPath;
 
+    private NetworkConnectionMonitor.NetworkConnectionListener listener;
+    private boolean isNetworkDisconnected = false;
+
     private ApiBroadcastReceiver<Channel> createChannelReceiver = new ApiBroadcastReceiver<Channel>() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -114,11 +120,12 @@ public class ChatActivity extends AppCompatActivity implements Holdr_ActivityCha
             Log.d(TAG, "Channel created : " + (chatChannel != null));
             chatChannel = result;
             state = State.CONNECTED;
+            appendMessage(new ChatInfoMessage("WebSocket has connected to the server."));
         }
 
         @Override
         public void onError(Context context, ApiException error) {
-            Toast.makeText(context, error.getUserMessage(getResources()), Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context, error.getUserMessage(getResources()), Toast.LENGTH_SHORT).show();
             Log.d(TAG, error.getMessage(), error);
         }
     };
@@ -217,6 +224,29 @@ public class ChatActivity extends AppCompatActivity implements Holdr_ActivityCha
             }
         });
 
+        // reconnect the channel after network recovered
+        NetworkConnectionMonitor.getInstance().addNetworkConnectionListener(listener = new NetworkConnectionMonitor.NetworkConnectionListener() {
+            @Override
+            public void onConnectionChanged(boolean connected) {
+                if (connected) {
+                    setEnableEntry(state == State.CONNECTED);
+                    if (isNetworkDisconnected) {
+                        isNetworkDisconnected = false;
+                        if (expertConnect.isChatActive()) {
+                            api.reconnectChannel(chatChannel);
+                        } else {
+                            startChat(DEMO_SKILL);
+                        }
+                        appendMessage(new ChatInfoMessage("Network connection has recovered."));
+                    }
+                } else {
+                    setEnableEntry(false);
+                    isNetworkDisconnected = true;
+                    appendMessage(new ChatInfoMessage("Network connection has died."));
+                }
+            }
+        });
+
         LinearLayoutManager manager = new LinearLayoutManager(this);
         manager.setStackFromEnd(true);
         holdr.chatList.setLayoutManager(manager);
@@ -229,8 +259,18 @@ public class ChatActivity extends AppCompatActivity implements Holdr_ActivityCha
 
         setEnableEntry(false);
 
-        // start chat without checking agent available and then start chat
-        startChat(DEMO_SKILL);
+
+        expertConnect.validateAPI(new ExpertConnect.validateAPIListener() {
+            @Override
+            public void validateAPI(boolean connected) {
+                if (connected) {
+                    // start chat without checking agent available and then start chat
+                    startChat(DEMO_SKILL);
+                } else {
+                    Toast.makeText(ChatActivity.this, "No internet connection found.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
         // check agent available and then start chat
         //checkAgentThenStartChat(DEMO_SKILL);
@@ -244,6 +284,8 @@ public class ChatActivity extends AppCompatActivity implements Holdr_ActivityCha
             api.unregister(createChannelReceiver);
         if (conversationEventReceiver != null)
             api.unregister(conversationEventReceiver);
+        if (listener != null)
+            NetworkConnectionMonitor.getInstance().removeNetworkConnectionListener(listener);
 
         super.onDestroy();
     }
@@ -326,7 +368,9 @@ public class ChatActivity extends AppCompatActivity implements Holdr_ActivityCha
         switch(state.getState()) {
             case ChannelState.STATE_ANSWERED:
                 Log.d(TAG, "Channel answered by agent");
+                appendMessage(new ChatInfoMessage("An agent is joining this chat..."));
                 setEnableEntry(true);
+                checkInternetConnection();
                 break;
             case ChannelState.STATE_DISCONNECTED:
             case ChannelState.STATE_TIMEOUT:
@@ -345,6 +389,32 @@ public class ChatActivity extends AppCompatActivity implements Holdr_ActivityCha
                 Log.d(TAG, "Estimated Wait Time = " + estimatedWaitTime);
                 break;
         }
+    }
+
+
+    // Added a function to check internet connection in every 20 seconds
+    private void checkInternetConnection() {
+        final Handler handler = new Handler();
+        final int delay = 20000;
+
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                if (expertConnect.isChatActive()) {
+                    expertConnect.validateAPI(new ExpertConnect.validateAPIListener() {
+                        @Override
+                        public void validateAPI(boolean connected) {
+                            if (connected) {
+                                appendMessage(new ChatInfoMessage("Server API check: healthy"));
+                            } else {
+                                appendMessage(new ChatInfoMessage("Server API check: unhealthy or no connection to servers."));
+                            }
+                        }
+                    });
+                    handler.postDelayed(this, delay);
+                }
+
+            }
+        }, delay);
     }
 
     private void handleChatState(ChatState state) {
