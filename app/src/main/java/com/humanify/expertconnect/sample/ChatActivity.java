@@ -224,24 +224,20 @@ public class ChatActivity extends AppCompatActivity implements Holdr_ActivityCha
             }
         });
 
-        // reconnect the channel after network recovered
+        // Adding this listener to receive the network changes.
         NetworkConnectionMonitor.getInstance().addNetworkConnectionListener(listener = new NetworkConnectionMonitor.NetworkConnectionListener() {
             @Override
             public void onConnectionChanged(boolean connected) {
                 if (connected) {
-                    setEnableEntry(state == State.CONNECTED);
                     if (isNetworkDisconnected) {
                         isNetworkDisconnected = false;
-                        if (expertConnect.isChatActive()) {
-                            api.reconnectChannel(chatChannel);
-                        } else {
-                            startChat(DEMO_SKILL);
-                        }
-                        appendMessage(new ChatInfoMessage("Network connection has recovered."));
+                        // add any custom logic after network recovered.
                     }
+                    setEnableEntry(state == State.CONNECTED);
+                    appendMessage(new ChatInfoMessage("Network connection has recovered."));
                 } else {
-                    setEnableEntry(false);
                     isNetworkDisconnected = true;
+                    setEnableEntry(false);
                     appendMessage(new ChatInfoMessage("Network connection has died."));
                 }
             }
