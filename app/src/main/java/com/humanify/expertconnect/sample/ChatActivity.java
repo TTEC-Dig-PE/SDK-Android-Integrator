@@ -232,9 +232,9 @@ public class ChatActivity extends AppCompatActivity implements Holdr_ActivityCha
                     if (isNetworkDisconnected) {
                         isNetworkDisconnected = false;
                         // add any custom logic after network recovered.
+                        appendMessage(new ChatInfoMessage("Network connection has recovered."));
                     }
                     setEnableEntry(state == State.CONNECTED);
-                    appendMessage(new ChatInfoMessage("Network connection has recovered."));
                 } else {
                     isNetworkDisconnected = true;
                     setEnableEntry(false);
