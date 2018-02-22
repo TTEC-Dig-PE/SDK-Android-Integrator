@@ -10,6 +10,38 @@ Notes: Chats & callback will require an agent to answer. Please contact us for a
 
 Release Notes: https://docs.google.com/document/d/1S6DOxTxL_LBT3BLvn-zZ7FWI6972H9_k2TiDheXyAUY
 
+## Customizing the top navigation bar button items in chat
+
+The top navigation bar buttons can now be customized. The behavior, colors, fonts, and icons can be changed. The top two navigation buttons are called the "Back" button (left) and the "End" button (right). 
+
+The behavior of the buttons can be overridden using listeners. 
+
+https://github.com/humanifydev/SDK-Android-Integrator/blob/master/app/src/main/java/com/humanify/expertconnect/sample/SampleActivity.java
+
+* Back Button: See line 180
+* End Button: See line 225
+
+The fonts, colors, and text for the buttons are customized using strings. Override the following to change: 
+
+https://github.com/humanifydev/SDK-Android-Integrator/blob/master/app/src/main/res/values/strings.xml
+
+    <!-- Attribute to change End Chat button title -->
+    <string name="expertconnect_end_chat">End Chat</string>
+
+    <!-- ExpertConnect Custom Attributes -->
+  
+    <!-- Navigation back button customization(left button) attributes -->
+    <!--<item name="expertconnect_chatBackButtonDrawable">@android:drawable/ic_menu_view</item>-->
+    <!--<item name="expertconnect_chatBackButtonDrawableColor">@color/black</item>-->
+
+    <!-- End Chat button customization(right button) attributes -->
+    <!--<item name="expertconnect_chatEndButtonDrawable">@android:drawable/ic_menu_close_clear_cancel</item>-->
+    <!--<item name="expertconnect_ChatEndButtonTextColor">@color/red</item>-->
+
+    <!-- ExpertConnect Custom Attributes -->
+
+
+
 ## Getting Chat Skill Availability Details
 The details of a chat or callback skill (such as estimated wait, chatReady, queueOpen) can be retrieved using the "getDetailsForExpertSkill" function. Example:
 
