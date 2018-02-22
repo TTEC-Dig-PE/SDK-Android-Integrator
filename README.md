@@ -4,7 +4,7 @@ An SDK Source Code example project written in Objective-C and Swift
 For access to the SDK .aar files directly go here:
 https://github.com/humanifydev/SDK-Android-Integrator/tree/master/app/libs
 
-To Run: Open "MainApplication.java" Find the URL string (approx line 26) and the token string (approx line 27). Paste the auth token and URL provided by Humanify support here. 
+To Run: Open "MainApplication.java" Find the URL string (approx line 26) and the token string (approx line 27). Paste the auth token and URL provided by Humanify support here.
 
 Notes: Chats & callback will require an agent to answer. Please contact us for assistance setting up an agent account.
 
@@ -34,7 +34,7 @@ The details of a chat or callback skill (such as estimated wait, chatReady, queu
     });
 
 Example can be found on line 408 of https://github.com/humanifydev/SDK-Android-Integrator/blob/master/app/src/main/java/com/humanify/expertconnect/sample/ChatActivity.java
-  
+
 The SkillDetail object contains the following fields:
 * active - Whether this skill queue is active or not.
 * chatCapacity - Maximum capacity of agents this skill can contain.
@@ -47,9 +47,9 @@ The SkillDetail object contains the following fields:
 * voiceCapacity - Maximum capacity of agents who can take voice calls.
 * voiceReady - Current number of agents ready to accept calls.
 
-## Chat Persistence 
+## Chat Persistence
 The chat persistence is implemented by loading chat history of the chat and populating the messages in chat screen. Example:
-   
+
     getSupportLoaderManager().restartLoader(0, null, new LoaderManager.LoaderCallbacks<ApiResult<ConversationHistoryResponse>>() {
             @Override
             public Loader<ApiResult<ConversationHistoryResponse>> onCreateLoader(int id, Bundle args) {
