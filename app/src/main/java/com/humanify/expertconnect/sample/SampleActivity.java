@@ -177,6 +177,7 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
 
         registerConversation();
 
+        /* Callback function to override the actions of end chat button. */
         expertConnect.setChatEndButtonListener(new ExpertConnect.ChatEndButtonListener() {
             @Override
             public boolean onEndButtonPressed(final com.humanify.expertconnect.activity.ChatActivity chatActivity) {
@@ -221,6 +222,7 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
             }
         });
 
+        /* Callback function to override the actions of back button. */
         expertConnect.setChatBackButtonListener(new ExpertConnect.ChatBackButtonListener() {
             @Override
             public boolean onBackButtonPressed(final com.humanify.expertconnect.activity.ChatActivity chatActivity, boolean fromNavigationUp) {

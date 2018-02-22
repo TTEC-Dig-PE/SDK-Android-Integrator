@@ -78,4 +78,7 @@
         <item quantity="other">Wait time is %d Minutes</item>
     </plurals>
     <string name="wait_time_greater_than_five">%d minutes or longer</string>
+
+    <!-- Attribute to change End Chat button title -->
+     <!--<string name="expertconnect_end_chat">End Chat</string>-->
 </resources>
