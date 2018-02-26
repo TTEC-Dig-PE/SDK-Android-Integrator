@@ -176,6 +176,77 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
         api.registerForSDKNotifications(notificationReceiver);
 
         registerConversation();
+
+        /* Callback function to override the actions of end chat button. */
+        expertConnect.setChatEndButtonListener(new ExpertConnect.ChatEndButtonListener() {
+            @Override
+            public boolean onEndButtonPressed(final com.humanify.expertconnect.activity.ChatActivity chatActivity) {
+                if (chatActivity != null) {
+
+                    //To check if the chat is disconnected or not.
+                    if (chatActivity.isChatDisconnected()) {
+                        return true;
+                    }
+
+                    //To check if the chat is in queue
+                    if (chatActivity.getChatState() == com.humanify.expertconnect.activity.ChatActivity.CHAT_STATE_OPEN || chatActivity.getChatFragment().isWaitScreenVisible()) {
+                        new AlertDialog.Builder(chatActivity)
+                                .setTitle(com.humanify.expertconnect.R.string.expertconnect_leave_queue_title)
+                                .setMessage(com.humanify.expertconnect.R.string.expertconnect_leave_queue_message)
+                                .setPositiveButton(com.humanify.expertconnect.R.string.expertconnect_leave_queue_yes, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        //call this method for leave queue "yes" action.
+                                        chatActivity.leaveQueueAction();
+                                    }
+                                })
+                                .setNegativeButton(com.humanify.expertconnect.R.string.expertconnect_leave_queue_no, null)
+                                .show();
+                    } else {
+                        // show alert dialog to end chat
+                        new AlertDialog.Builder(chatActivity)
+                                .setTitle(com.humanify.expertconnect.R.string.expertconnect_chat_exit_title)
+                                .setMessage(com.humanify.expertconnect.R.string.expertconnect_exit_chat)
+                                .setPositiveButton(com.humanify.expertconnect.R.string.expertconnect_yes, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        //call this method for ending chat "yes" action.
+                                        chatActivity.endChatAction();
+                                    }
+                                })
+                                .setNegativeButton(com.humanify.expertconnect.R.string.expertconnect_no, null)
+                                .show();
+                    }
+                }
+                return false;
+            }
+        });
+
+        /* Callback function to override the actions of back button. */
+        expertConnect.setChatBackButtonListener(new ExpertConnect.ChatBackButtonListener() {
+            @Override
+            public boolean onBackButtonPressed(final com.humanify.expertconnect.activity.ChatActivity chatActivity, boolean fromNavigationUp) {
+                //check if the chat is in queue
+                if (chatActivity.getChatState() == com.humanify.expertconnect.activity.ChatActivity.CHAT_STATE_OPEN || chatActivity.getChatFragment().isWaitScreenVisible()) {
+                    new AlertDialog.Builder(chatActivity)
+                            .setTitle(com.humanify.expertconnect.R.string.expertconnect_leave_queue_title)
+                            .setMessage(com.humanify.expertconnect.R.string.expertconnect_leave_queue_message)
+                            .setPositiveButton(com.humanify.expertconnect.R.string.expertconnect_leave_queue_yes, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    //call this method for leave queue "yes" action.
+                                    chatActivity.leaveQueueAction();
+                                }
+                            })
+                            .setNegativeButton(com.humanify.expertconnect.R.string.expertconnect_leave_queue_no, null)
+                            .show();
+                } else {
+                    //call this method for back button navigation.
+                    return chatActivity.backKeyAction(fromNavigationUp);
+                }
+                return false;
+            }
+        });
     }
 
     @Override
