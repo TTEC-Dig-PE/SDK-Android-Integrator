@@ -23,7 +23,7 @@ https://github.com/humanifydev/SDK-Android-Integrator/blob/master/app/src/main/j
 
 The fonts, colors, and text for the buttons are customized using strings. Override the following to change: 
 
-https://github.com/humanifydev/SDK-Android-Integrator/blob/master/app/src/main/res/values/strings.xml
+https://github.com/humanifydev/SDK-Android-Integrator/blob/master/app/src/main/res/values/styles.xml
 
     <!-- Attribute to change End Chat button title -->
     <string name="expertconnect_end_chat">End Chat</string>
