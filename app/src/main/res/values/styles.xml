@@ -14,11 +14,20 @@
         <item name="expertconnect_theme">@style/AppTheme.ExpertConnect</item>
 
         <!-- ExpertConnect Custom Attributes -->
+
         <item name="expertconnect_showChatAvatar">true</item>
         <item name="expertconnect_showChatPhotoUploadButton">false</item>
         <item name="expertconnect_text_color_link">@android:color/black</item>
-        <!-- ExpertConnect Custom Attributes -->
 
+        <!-- Navigation back button customization(left button) attributes -->
+        <!-- <item name="expertconnect_chatBackButtonDrawable">@android:drawable/ic_menu_view</item>-->
+        <!--<item name="expertconnect_chatBackButtonDrawableColor">@color/black</item>-->
+
+        <!-- End Chat button customization(right button) attributes -->
+        <!--<item name="expertconnect_chatEndButtonDrawable">@android:drawable/ic_menu_close_clear_cancel</item>-->
+        <!--<item name="expertconnect_ChatEndButtonTextColor">@color/red</item>-->
+
+        <!-- ExpertConnect Custom Attributes -->
     </style>
 
     <style name="BaseAppTheme.ExpertConnect" parent="ExpertConnect.Theme.Light.DarkActionBar">

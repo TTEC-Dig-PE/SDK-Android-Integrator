@@ -30,6 +30,8 @@ import com.humanify.expertconnect.api.model.form.FormItem;
 import com.humanify.expertconnect.sample.databinding.ActivitySampleBinding;
 import com.humanify.expertconnect.view.compat.MaterialButton;
 
+import java.util.HashMap;
+
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -37,7 +39,7 @@ import retrofit.client.Response;
 public class SampleActivity extends AppCompatActivity implements ExpertConnectConversationApi.FormListener {
 
     public final static String TAG = "SampleActivity";
-    private static String USER_NAME = "Humanify Demo";
+    private static String USER_NAME = "demo@humanify.com";
     private static String USER_ID = "demo@humanify.com";
 
     private static String DEMO_ANSWER_ENGINE = "Park";
@@ -175,6 +177,77 @@ public class SampleActivity extends AppCompatActivity implements ExpertConnectCo
         api.registerForSDKNotifications(notificationReceiver);
 
         registerConversation();
+
+        /* Callback function to override the actions of end chat button. */
+        expertConnect.setChatEndButtonListener(new ExpertConnect.ChatEndButtonListener() {
+            @Override
+            public boolean onEndButtonPressed(final com.humanify.expertconnect.activity.ChatActivity chatActivity) {
+                if (chatActivity != null) {
+
+                    //To check if the chat is disconnected or not.
+                    if (chatActivity.isChatDisconnected()) {
+                        return true;
+                    }
+
+                    //To check if the chat is in queue
+                    if (chatActivity.getChatState() == com.humanify.expertconnect.activity.ChatActivity.CHAT_STATE_OPEN || chatActivity.getChatFragment().isWaitScreenVisible()) {
+                        new AlertDialog.Builder(chatActivity)
+                                .setTitle(com.humanify.expertconnect.R.string.expertconnect_leave_queue_title)
+                                .setMessage(com.humanify.expertconnect.R.string.expertconnect_leave_queue_message)
+                                .setPositiveButton(com.humanify.expertconnect.R.string.expertconnect_leave_queue_yes, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        //call this method for leave queue "yes" action.
+                                        chatActivity.leaveQueueAction();
+                                    }
+                                })
+                                .setNegativeButton(com.humanify.expertconnect.R.string.expertconnect_leave_queue_no, null)
+                                .show();
+                    } else {
+                        // show alert dialog to end chat
+                        new AlertDialog.Builder(chatActivity)
+                                .setTitle(com.humanify.expertconnect.R.string.expertconnect_chat_exit_title)
+                                .setMessage(com.humanify.expertconnect.R.string.expertconnect_exit_chat)
+                                .setPositiveButton(com.humanify.expertconnect.R.string.expertconnect_yes, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        //call this method for ending chat "yes" action.
+                                        chatActivity.endChatAction();
+                                    }
+                                })
+                                .setNegativeButton(com.humanify.expertconnect.R.string.expertconnect_no, null)
+                                .show();
+                    }
+                }
+                return false;
+            }
+        });
+
+        /* Callback function to override the actions of back button. */
+        expertConnect.setChatBackButtonListener(new ExpertConnect.ChatBackButtonListener() {
+            @Override
+            public boolean onBackButtonPressed(final com.humanify.expertconnect.activity.ChatActivity chatActivity, boolean fromNavigationUp) {
+                //check if the chat is in queue
+                if (chatActivity.getChatState() == com.humanify.expertconnect.activity.ChatActivity.CHAT_STATE_OPEN || chatActivity.getChatFragment().isWaitScreenVisible()) {
+                    new AlertDialog.Builder(chatActivity)
+                            .setTitle(com.humanify.expertconnect.R.string.expertconnect_leave_queue_title)
+                            .setMessage(com.humanify.expertconnect.R.string.expertconnect_leave_queue_message)
+                            .setPositiveButton(com.humanify.expertconnect.R.string.expertconnect_leave_queue_yes, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    //call this method for leave queue "yes" action.
+                                    chatActivity.leaveQueueAction();
+                                }
+                            })
+                            .setNegativeButton(com.humanify.expertconnect.R.string.expertconnect_leave_queue_no, null)
+                            .show();
+                } else {
+                    //call this method for back button navigation.
+                    return chatActivity.backKeyAction(fromNavigationUp);
+                }
+                return false;
+            }
+        });
     }
 
     @Override
@@ -215,6 +288,87 @@ public class SampleActivity extends AppCompatActivity implements ExpertConnectCo
         api.unregister(journeyReceiver);
         //api.unregister(breadcrumbsSessionReceiver);
         //api.unregister(breadcrumbsActionReceiver);
+    }
+
+    @Override
+    public void onStartChatClick(MaterialButton startChat) {
+        highLevelChatActive = true;
+        //api.startChat(DEMO_SKILL, null, new ChatChannelOptions("Call Center High Level", "Student"));
+
+       /* Sending key/value pair channel options*/
+        HashMap<String, String> channelOptions = new HashMap<String, String>();
+        channelOptions.put("department", "Call Center High Level");
+        channelOptions.put("userType", "Student");
+
+        api.startChat(DEMO_SKILL, null, channelOptions);
+    }
+
+    @Override
+    public void onStartAnswerEngineClick(MaterialButton startAnswerEngine) {
+        api.startAnswerEngine(DEMO_ANSWER_ENGINE);
+    }
+
+    @Override
+    public void onStartVoiceCallbackClick(MaterialButton startVoiceCallback) {
+        api.startVoiceCallback(DEMO_SKILL);
+    }
+
+    @Override
+    public void onStartFormClick(MaterialButton startForm) {
+        api.startInterviewForms(DEMO_FORM);
+    }
+
+    @Override
+    public void onVoiceCallbackClick(MaterialButton voiceCallback) {
+        if(expertConnect.isCallbackActive()) {
+            api.closeReplyBackChannel(expertConnect.getCallbackChannel());
+        } else {
+            startActivity(new Intent(this, VoiceCallbackActivity.class));
+        }
+    }
+
+    @Override
+    public void onAnswerEngineClick(MaterialButton answerEngineCallback) {
+        Toast.makeText(this, "Coming soon...", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onChatClick(MaterialButton chatCallback) {
+        startActivity(new Intent(this, ChatActivity.class));
+    }
+
+    private static int interactionsCount = 0;
+    @Override
+    public void onSendBreadcrumbClick(MaterialButton startForm) {
+        interactionsCount++;
+        breadcrumbsAction(this,
+                "User interaction count",
+                Integer.toString(interactionsCount),
+                "HumanifyDemo-SampleActivity",
+                "NA");
+    }
+
+    @Override
+    public void onMakeDecisionClick(MaterialButton startForm) {
+        ParcelableMap decisionDict = new ParcelableMap();
+        decisionDict.put("tenantId", "sce1_ops");
+        decisionDict.put("projectServiceName", "HuSimple");
+        decisionDict.put("eventId", "validateDE");
+        decisionDict.put("inputString", "hello world");
+
+        api.postDecisionData(decisionDict, new Callback<ParcelableMap>() {
+            @Override
+            public void success(ParcelableMap result, Response response) {
+                Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                String responseData = gson.toJson(result);
+                holdr.message.setText(responseData);
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Log.d("Retrofit_decision", error.getMessage());
+            }
+        });
     }
 
     private void handleAllNotifications(ExpertConnectNotification notification) {
