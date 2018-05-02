@@ -12,7 +12,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.FileProvider;
@@ -251,6 +250,9 @@ public class ChatActivity extends AppCompatActivity {
         binding.chatList.setAdapter(messageAdapter);
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
         api.registerCreateChannel(createChannelReceiver);
         api.registerGetConversationEvent(conversationEventReceiver);
 
@@ -288,11 +290,6 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-    }
-
-    @Override
     public void onStop() {
         super.onStop();
     }
@@ -305,26 +302,6 @@ public class ChatActivity extends AppCompatActivity {
                 break;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onAttachImageClick(MaterialIconToggle attachImage) {
-        selectImage();
-    }
-
-    @Override
-    public void onCancelClick(MaterialIconButton cancel) {
-    }
-
-    @Override
-    public void onSendClick(MaterialIconButton send) {
-        String message = holdr.chatMessage.getText().toString();
-        ChatMessage chatMessage = new ChatMessage.Builder(chatChannel, message)
-                .setFrom(IdentityManager.getInstance(this).getUserName())
-                .build();
-        appendMessage(chatMessage);
-        holdr.chatMessage.setText("");
-        api.sendMessage(chatMessage);
     }
 
     private void sendChatStateMessage(String composing) {
@@ -391,7 +368,7 @@ public class ChatActivity extends AppCompatActivity {
 
     // Added a function to check internet connection in every 20 seconds
     private void checkInternetConnection() {
-        final Handler handler = new Handler();
+        final android.os.Handler handler = new android.os.Handler();
         final int delay = 20000;
 
         handler.postDelayed(new Runnable() {
@@ -613,33 +590,6 @@ public class ChatActivity extends AppCompatActivity {
             binding.chatMessage.setText("");
             api.sendMessage(chatMessage);
         }
-    }
-    private void selectImage() {
-        holdr.attachImage.setChecked(true);
-        final CharSequence[] items = {"Take Photo", "Choose from Gallery", "Cancel"};
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(ChatActivity.this);
-        builder.setCancelable(false);
-        builder.setTitle("Send Image");
-        builder.setItems(items, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int item) {
-
-                if (items[item].equals("Take Photo")) {
-                    cameraIntent();
-                    holdr.attachImage.setChecked(false);
-
-                } else if (items[item].equals("Choose from Gallery")) {
-                    galleryIntent();
-                    holdr.attachImage.setChecked(false);
-
-                } else if (items[item].equals("Cancel")) {
-                    dialog.dismiss();
-                    holdr.attachImage.setChecked(false);
-                }
-            }
-        });
-        builder.show();
     }
 
     private void galleryIntent() {

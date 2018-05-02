@@ -55,7 +55,6 @@ public class SampleActivity extends AppCompatActivity implements ExpertConnectCo
     private static final int MAX_NO_ANSWER_COUNT = 2;
 
     boolean highLevelChatActive = false;
-    private static int interactionsCount = 0;
 
     /*private ApiBroadcastReceiver<ParcelableMap> decisionReceiver = new ApiBroadcastReceiver<ParcelableMap>(){
 
@@ -290,86 +289,7 @@ public class SampleActivity extends AppCompatActivity implements ExpertConnectCo
         //api.unregister(breadcrumbsActionReceiver);
     }
 
-    @Override
-    public void onStartChatClick(MaterialButton startChat) {
-        highLevelChatActive = true;
-        //api.startChat(DEMO_SKILL, null, new ChatChannelOptions("Call Center High Level", "Student"));
-
-       /* Sending key/value pair channel options*/
-        HashMap<String, String> channelOptions = new HashMap<String, String>();
-        channelOptions.put("department", "Call Center High Level");
-        channelOptions.put("userType", "Student");
-
-        api.startChat(DEMO_SKILL, null, channelOptions);
-    }
-
-    @Override
-    public void onStartAnswerEngineClick(MaterialButton startAnswerEngine) {
-        api.startAnswerEngine(DEMO_ANSWER_ENGINE);
-    }
-
-    @Override
-    public void onStartVoiceCallbackClick(MaterialButton startVoiceCallback) {
-        api.startVoiceCallback(DEMO_SKILL);
-    }
-
-    @Override
-    public void onStartFormClick(MaterialButton startForm) {
-        api.startInterviewForms(DEMO_FORM);
-    }
-
-    @Override
-    public void onVoiceCallbackClick(MaterialButton voiceCallback) {
-        if(expertConnect.isCallbackActive()) {
-            api.closeReplyBackChannel(expertConnect.getCallbackChannel());
-        } else {
-            startActivity(new Intent(this, VoiceCallbackActivity.class));
-        }
-    }
-
-    @Override
-    public void onAnswerEngineClick(MaterialButton answerEngineCallback) {
-        Toast.makeText(this, "Coming soon...", Toast.LENGTH_LONG).show();
-    }
-
-    @Override
-    public void onChatClick(MaterialButton chatCallback) {
-        startActivity(new Intent(this, ChatActivity.class));
-    }
-
     private static int interactionsCount = 0;
-    @Override
-    public void onSendBreadcrumbClick(MaterialButton startForm) {
-        interactionsCount++;
-        breadcrumbsAction(this,
-                "User interaction count",
-                Integer.toString(interactionsCount),
-                "HumanifyDemo-SampleActivity",
-                "NA");
-    }
-
-    @Override
-    public void onMakeDecisionClick(MaterialButton startForm) {
-        ParcelableMap decisionDict = new ParcelableMap();
-        decisionDict.put("tenantId", "sce1_ops");
-        decisionDict.put("projectServiceName", "HuSimple");
-        decisionDict.put("eventId", "validateDE");
-        decisionDict.put("inputString", "hello world");
-
-        api.postDecisionData(decisionDict, new Callback<ParcelableMap>() {
-            @Override
-            public void success(ParcelableMap result, Response response) {
-                Gson gson = new GsonBuilder().setPrettyPrinting().create();
-                String responseData = gson.toJson(result);
-                holdr.message.setText(responseData);
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                Log.d("Retrofit_decision", error.getMessage());
-            }
-        });
-    }
 
     private void handleAllNotifications(ExpertConnectNotification notification) {
         switch (notification.getType()){
