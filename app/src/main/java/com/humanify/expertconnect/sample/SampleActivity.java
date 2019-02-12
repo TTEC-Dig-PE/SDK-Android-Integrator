@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -26,7 +27,7 @@ import com.humanify.expertconnect.api.model.breadcrumbs.BreadcrumbsSession;
 import com.humanify.expertconnect.api.model.conversationengine.ConversationEvent;
 import com.humanify.expertconnect.api.model.form.Form;
 import com.humanify.expertconnect.api.model.form.FormItem;
-import com.humanify.expertconnect.sample.holdr.Holdr_ActivitySample;
+import com.humanify.expertconnect.sample.databinding.ActivitySampleBinding;
 import com.humanify.expertconnect.view.compat.MaterialButton;
 
 import java.util.HashMap;
@@ -35,7 +36,7 @@ import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
 
-public class SampleActivity extends AppCompatActivity implements Holdr_ActivitySample.Listener, ExpertConnectConversationApi.FormListener {
+public class SampleActivity extends AppCompatActivity implements ExpertConnectConversationApi.FormListener {
 
     public final static String TAG = "SampleActivity";
     private static String USER_NAME = "demo@humanify.com";
@@ -45,7 +46,7 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
     private static String DEMO_SKILL = "CE_Mobile_Chat";
     private static String DEMO_FORM = "rate_agent_form";
 
-    private Holdr_ActivitySample holdr;
+    private ActivitySampleBinding binding;
 
     private ExpertConnectApiProxy api;
     private ExpertConnect expertConnect;
@@ -61,7 +62,7 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
         public void onSuccess(Context context, ParcelableMap result) {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             String responseData =  gson.toJson(result);
-            holdr.message.setText(responseData);
+            binding.message.setText(responseData);
         }
 
         @Override
@@ -142,7 +143,7 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
         public void onSuccess(Context context, BreadcrumbsAction result) {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             String responseData =  "Breadcrumb Action Sent\n" + gson.toJson(result) + "\n";
-            holdr.message.setText(responseData);
+            binding.message.setText(responseData);
         }
 
         @Override
@@ -154,7 +155,9 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sample);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_sample);
+        binding.setHandler(new Handler());
+
         api = ExpertConnectApiProxy.getInstance(this);
         expertConnect = ExpertConnect.getInstance(this);
         expertConnect.setFormListener(true, this);
@@ -167,10 +170,7 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
         expertConnect.setUserId(USER_ID);
         expertConnect.setUserName(USER_NAME);
 
-        holdr = new Holdr_ActivitySample(findViewById(android.R.id.content));
-        holdr.setListener(this);
-
-        setSupportActionBar(holdr.toolbar);
+        setSupportActionBar(binding.toolbar);
         getSupportActionBar().setTitle(getString(R.string.humanify));
 
         api.registerForSDKNotifications(notificationReceiver);
@@ -260,10 +260,10 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
     protected void onResume() {
         super.onResume();
         if(highLevelChatActive && expertConnect.isChatActive()) {
-            holdr.startChat.setText(R.string.continue_chat);
+            binding.startChat.setText(R.string.continue_chat);
         }
         if(expertConnect.isCallbackActive()) {
-            holdr.voiceCallback.setText(R.string.end_callback);
+            binding.voiceCallback.setText(R.string.end_callback);
         }
     }
 
@@ -289,86 +289,7 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
         //api.unregister(breadcrumbsActionReceiver);
     }
 
-    @Override
-    public void onStartChatClick(MaterialButton startChat) {
-        highLevelChatActive = true;
-        //api.startChat(DEMO_SKILL, null, new ChatChannelOptions("Call Center High Level", "Student"));
-
-       /* Sending key/value pair channel options*/
-        HashMap<String, String> channelOptions = new HashMap<String, String>();
-        channelOptions.put("department", "Call Center High Level");
-        channelOptions.put("userType", "Student");
-
-        api.startChat(DEMO_SKILL, null, channelOptions);
-    }
-
-    @Override
-    public void onStartAnswerEngineClick(MaterialButton startAnswerEngine) {
-        api.startAnswerEngine(DEMO_ANSWER_ENGINE);
-    }
-
-    @Override
-    public void onStartVoiceCallbackClick(MaterialButton startVoiceCallback) {
-        api.startVoiceCallback(DEMO_SKILL);
-    }
-
-    @Override
-    public void onStartFormClick(MaterialButton startForm) {
-        api.startInterviewForms(DEMO_FORM);
-    }
-
-    @Override
-    public void onVoiceCallbackClick(MaterialButton voiceCallback) {
-        if(expertConnect.isCallbackActive()) {
-            api.closeReplyBackChannel(expertConnect.getCallbackChannel());
-        } else {
-            startActivity(new Intent(this, VoiceCallbackActivity.class));
-        }
-    }
-
-    @Override
-    public void onAnswerEngineClick(MaterialButton answerEngineCallback) {
-        Toast.makeText(this, "Coming soon...", Toast.LENGTH_LONG).show();
-    }
-
-    @Override
-    public void onChatClick(MaterialButton chatCallback) {
-        startActivity(new Intent(this, ChatActivity.class));
-    }
-
     private static int interactionsCount = 0;
-    @Override
-    public void onSendBreadcrumbClick(MaterialButton startForm) {
-        interactionsCount++;
-        breadcrumbsAction(this,
-                "User interaction count",
-                Integer.toString(interactionsCount),
-                "HumanifyDemo-SampleActivity",
-                "NA");
-    }
-
-    @Override
-    public void onMakeDecisionClick(MaterialButton startForm) {
-        ParcelableMap decisionDict = new ParcelableMap();
-        decisionDict.put("tenantId", "sce1_ops");
-        decisionDict.put("projectServiceName", "HuSimple");
-        decisionDict.put("eventId", "validateDE");
-        decisionDict.put("inputString", "hello world");
-
-        api.postDecisionData(decisionDict, new Callback<ParcelableMap>() {
-            @Override
-            public void success(ParcelableMap result, Response response) {
-                Gson gson = new GsonBuilder().setPrettyPrinting().create();
-                String responseData = gson.toJson(result);
-                holdr.message.setText(responseData);
-            }
-
-            @Override
-            public void failure(RetrofitError error) {
-                Log.d("Retrofit_decision", error.getMessage());
-            }
-        });
-    }
 
     private void handleAllNotifications(ExpertConnectNotification notification) {
         switch (notification.getType()){
@@ -391,12 +312,12 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
     }
 
     private void handleCallbackEnd(ExpertConnectNotification notification) {
-        holdr.voiceCallback.setText(R.string.start_voice_callback);
+        binding.voiceCallback.setText(R.string.start_voice_callback);
         Toast.makeText(this, notification.getMessage(), Toast.LENGTH_LONG).show();
     }
 
     private void handleChatEnd(ExpertConnectNotification notification) {
-        holdr.startChat.setText(R.string.start_chat);
+        binding.startChat.setText(R.string.start_chat);
     }
 
     private void handleNoAnswer(ExpertConnectNotification notification) {
@@ -416,7 +337,7 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
 
     private void handleChatLeftWithoutEnding(ExpertConnectNotification notification) {
         if(highLevelChatActive && expertConnect.isChatActive()) {
-            holdr.startChat.setText(R.string.continue_chat);
+            binding.startChat.setText(R.string.continue_chat);
         }
     }
 
@@ -471,7 +392,7 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
             public void success(BreadcrumbsAction result, Response response) {
                 Gson gson = new GsonBuilder().setPrettyPrinting().create();
                 String responseData =  "Breadcrumb Action Sent\n" + gson.toJson(result) + "\n";
-                holdr.message.setText(responseData);
+                binding.message.setText(responseData);
             }
 
             @Override
@@ -507,7 +428,7 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
                 @Override
                 public void onSuccess(Context context, ConversationEvent result) {
                     if (highLevelChatActive && expertConnect.isChatActive()) {
-                        holdr.startChat.setText("*" + getResources().getString(R.string.continue_chat));
+                        binding.startChat.setText("*" + getResources().getString(R.string.continue_chat));
                     }
                 }
 
@@ -567,5 +488,73 @@ public class SampleActivity extends AppCompatActivity implements Holdr_ActivityS
     @Override
     public void formErrorRaised(Activity context, ApiException exception) {
         Log.i(TAG, "Error occurred while loading the form: " + exception);
+    }
+
+    public class Handler {
+
+        public void onStartChatClick(MaterialButton startChat) {
+            highLevelChatActive = true;
+            api.startChat(DEMO_SKILL, null);
+        }
+
+        public void onStartAnswerEngineClick(MaterialButton startAnswerEngine) {
+            api.startAnswerEngine(DEMO_ANSWER_ENGINE);
+        }
+
+        public void onStartVoiceCallbackClick(MaterialButton startVoiceCallback) {
+            api.startVoiceCallback(DEMO_SKILL);
+        }
+
+        public void onStartFormClick(MaterialButton startForm) {
+            api.startInterviewForms(DEMO_FORM);
+        }
+
+        public void onVoiceCallbackClick(MaterialButton voiceCallback) {
+            if(expertConnect.isCallbackActive()) {
+                api.closeReplyBackChannel(expertConnect.getCallbackChannel());
+            } else {
+                startActivity(new Intent(SampleActivity.this, VoiceCallbackActivity.class));
+            }
+        }
+
+        public void onAnswerEngineClick(MaterialButton answerEngineCallback) {
+            Toast.makeText(SampleActivity.this, "Coming soon...", Toast.LENGTH_LONG).show();
+        }
+
+        public void onChatClick(MaterialButton chatCallback) {
+            startActivity(new Intent(SampleActivity.this, ChatActivity.class));
+        }
+
+        public void onSendBreadcrumbClick(MaterialButton startForm) {
+            interactionsCount++;
+            breadcrumbsAction(SampleActivity.this,
+                    "User interaction count",
+                    Integer.toString(interactionsCount),
+                    "HumanifyDemo-SampleActivity",
+                    "NA");
+        }
+
+        public void onMakeDecisionClick(MaterialButton startForm) {
+            ParcelableMap decisionDict = new ParcelableMap();
+            decisionDict.put("tenantId", "sce1_ops");
+            decisionDict.put("projectServiceName", "HuSimple");
+            decisionDict.put("eventId", "validateDE");
+            decisionDict.put("inputString", "hello world");
+
+            api.postDecisionData(decisionDict, new Callback<ParcelableMap>() {
+                @Override
+                public void success(ParcelableMap result, Response response) {
+                    Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                    String responseData = gson.toJson(result);
+                    binding.message.setText(responseData);
+                }
+
+                @Override
+                public void failure(RetrofitError error) {
+                    Log.d("Retrofit_decision", error.getMessage());
+                }
+            });
+        }
+
     }
 }

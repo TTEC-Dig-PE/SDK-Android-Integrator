@@ -2,6 +2,7 @@ package com.humanify.expertconnect.sample;
 
 import android.content.Context;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -10,13 +11,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.telephony.PhoneNumberUtils;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.humanify.expertconnect.ExpertConnect;
@@ -29,18 +29,18 @@ import com.humanify.expertconnect.api.model.conversationengine.ChannelRequest;
 import com.humanify.expertconnect.api.model.conversationengine.ChannelState;
 import com.humanify.expertconnect.api.model.conversationengine.ConversationEvent;
 import com.humanify.expertconnect.api.model.experts.SkillDetail;
-import com.humanify.expertconnect.sample.holdr.Holdr_ActivityVoicecallback;
+import com.humanify.expertconnect.sample.databinding.ActivityVoicecallbackBinding;
 import com.humanify.expertconnect.util.ApiResult;
 import com.humanify.expertconnect.view.compat.MaterialButton;
 
-public class VoiceCallbackActivity extends AppCompatActivity implements Holdr_ActivityVoicecallback.Listener {
+public class VoiceCallbackActivity extends AppCompatActivity {
 
     private final static String TAG = VoiceCallbackActivity.class.getSimpleName();
     private final static String DEMO_SKILL = "CE_Mobile_Chat";
 
     private enum State {NONE, REQUESTED, CONNECTED, DISCONNECTED}
 
-    private Holdr_ActivityVoicecallback holdr;
+    private ActivityVoicecallbackBinding binding;
 
     private ExpertConnectApiProxy api;
     private ExpertConnect expertConnect;
@@ -56,13 +56,13 @@ public class VoiceCallbackActivity extends AppCompatActivity implements Holdr_Ac
         public void onSuccess(Context context, Channel result) {
             voiceChannel = result;
             state = State.CONNECTED;
-            holdr.requestCall.setText(R.string.cancel_callback);
+            binding.requestCall.setText(R.string.cancel_callback);
         }
 
         @Override
         public void onError(Context context, ApiException error) {
             state = State.DISCONNECTED;
-            holdr.requestCall.setText(R.string.request_callback);
+            binding.requestCall.setText(R.string.request_callback);
             Toast.makeText(context, error.getUserMessage(getResources()), Toast.LENGTH_SHORT).show();
             Log.d(TAG, error.getUserMessage(getResources()));
         }
@@ -92,7 +92,7 @@ public class VoiceCallbackActivity extends AppCompatActivity implements Holdr_Ac
         public void onSuccess(Context context) {
             voiceChannel = null;
             state = State.DISCONNECTED;
-            holdr.requestCall.setText(R.string.request_callback);
+            binding.requestCall.setText(R.string.request_callback);
         }
 
         @Override
@@ -110,10 +110,8 @@ public class VoiceCallbackActivity extends AppCompatActivity implements Holdr_Ac
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_voicecallback);
-
-        holdr = new Holdr_ActivityVoicecallback(findViewById(android.R.id.content));
-        holdr.setListener(this);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_voicecallback);
+        binding.setHandler(new Handler());
 
         api = ExpertConnectApiProxy.getInstance(this);
         expertConnect = ExpertConnect.getInstance(this);
@@ -124,9 +122,9 @@ public class VoiceCallbackActivity extends AppCompatActivity implements Holdr_Ac
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        holdr.requestCall.setEnabled(false);
-        holdr.phoneNumber.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
-        holdr.phoneNumber.addTextChangedListener(new TextWatcher() {
+        binding.requestCall.setEnabled(false);
+        binding.phoneNumber.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
+        binding.phoneNumber.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -140,6 +138,13 @@ public class VoiceCallbackActivity extends AppCompatActivity implements Holdr_Ac
             @Override
             public void afterTextChanged(Editable s) {
 
+            }
+        });
+
+        binding.phoneNumber.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                return false;
             }
         });
 
@@ -179,49 +184,10 @@ public class VoiceCallbackActivity extends AppCompatActivity implements Holdr_Ac
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onRequestCallClick(MaterialButton requestCall) {
-        switch(state) {
-            case NONE:
-            case DISCONNECTED:
-                if (!expertConnect.isCallbackActive()) {
-                    ChannelRequest channelRequest = new ChannelRequest.Builder(this)
-                            .setTo(DEMO_SKILL)
-                            .setFrom(expertConnect.getUserName())
-                            .setSubject("help")
-                            .setMediaType(ChannelRequest.MEDIA_TYPE_VOICE)
-                            .setSourceType(ChannelRequest.SOURCE_TYPE_CALLBACK)
-                            .setPriority(5)
-                            .setSourceAddress(getPhoneNumber())
-                            .build();
-                    api.createChannel(channelRequest);
-                    holdr.requestCall.setText(R.string.processing_callback);
-
-                    state = State.REQUESTED;
-                }
-                break;
-            case REQUESTED:
-                if (!expertConnect.isCallbackActive()) {
-                    Toast.makeText(this, "Your request is in progress", Toast.LENGTH_LONG).show();
-                }
-                break;
-            case CONNECTED:
-                if (expertConnect.isCallbackActive()) {
-                    api.closeReplyBackChannel(voiceChannel);
-                }
-                break;
-        }
-    }
-
-    @Override
-    public boolean onPhoneNumberEditorAction(EditText phoneNumber, int actionId, KeyEvent event) {
-        return false;
-    }
-
 
     private void validatePhoneNumber(String number) {
         boolean isValid = PhoneNumberUtils.isGlobalPhoneNumber(PhoneNumberUtils.stripSeparators(number));
-        holdr.requestCall.setEnabled(isValid);
+        binding.requestCall.setEnabled(isValid);
     }
 
     private LoaderManager.LoaderCallbacks<ApiResult<SkillDetail>> skillLoader = new LoaderManager.LoaderCallbacks<ApiResult<SkillDetail>>() {
@@ -239,8 +205,8 @@ public class VoiceCallbackActivity extends AppCompatActivity implements Holdr_Ac
             try {
                 SkillDetail skillDetail = data.get();
                 estimatedWaitTime = (skillDetail.getEstWait() < 0 ? skillDetail.getEstWait() : (int) Math.round(skillDetail.getEstWait() / 60.0));
-                holdr.estimatedWaitTime.setText(getResources().getQuantityString(R.plurals.agents_wait_time, estimatedWaitTime, estimatedWaitTime));
-                holdr.estimatedWaitTime.setText(getWaitMessage(estimatedWaitTime, skillDetail.getVoiceReady()));
+                binding.estimatedWaitTime.setText(getResources().getQuantityString(R.plurals.agents_wait_time, estimatedWaitTime, estimatedWaitTime));
+                binding.estimatedWaitTime.setText(getWaitMessage(estimatedWaitTime, skillDetail.getVoiceReady()));
             } catch (ApiException e) {
                 Log.i(TAG, e.getUserMessage(getResources()));
             }
@@ -256,11 +222,11 @@ public class VoiceCallbackActivity extends AppCompatActivity implements Holdr_Ac
         String waitMessage = "";
 
         if(estimatedWaitTIme < 0 || (estimatedWaitTIme == 0 && agentsAvailable == 0)){
-            holdr.estimatedWaitTimeLabel.setVisibility(View.GONE);
+            binding.estimatedWaitTimeLabel.setVisibility(View.GONE);
             waitMessage = getString(R.string.no_agents_available);
         }
         else{
-            holdr.estimatedWaitTimeLabel.setVisibility(View.VISIBLE);
+            binding.estimatedWaitTimeLabel.setVisibility(View.VISIBLE);
             waitMessage = getResources().getQuantityString(R.plurals.agents_wait_time, estimatedWaitTIme, estimatedWaitTIme);
         }
 
@@ -271,12 +237,12 @@ public class VoiceCallbackActivity extends AppCompatActivity implements Holdr_Ac
         switch(state.getState()) {
             case ChannelState.STATE_ANSWERED:
                 Log.d(TAG, "Channel answered by agent");
-                holdr.requestCall.setText(R.string.end_callback);
+                binding.requestCall.setText(R.string.end_callback);
                 break;
             case ChannelState.STATE_DISCONNECTED:
             case ChannelState.STATE_TIMEOUT:
                 Log.d(TAG, "Channel disconnected by agent");
-                holdr.requestCall.setText(R.string.request_callback);
+                binding.requestCall.setText(R.string.request_callback);
                 this.state = State.DISCONNECTED;
                 break;
             default:
@@ -287,11 +253,47 @@ public class VoiceCallbackActivity extends AppCompatActivity implements Holdr_Ac
     }
 
     private String getPhoneNumber() {
-        String phoneNumber = PhoneNumberUtils.stripSeparators(holdr.phoneNumber.getText().toString());
+        String phoneNumber = PhoneNumberUtils.stripSeparators(binding.phoneNumber.getText().toString());
         if (phoneNumber.length() > 10) {
             // Assume numbers greater then 10 digits are international.
             phoneNumber = PhoneNumberUtils.stringFromStringAndTOA(phoneNumber, PhoneNumberUtils.TOA_International);
         }
         return phoneNumber;
+    }
+
+    public class Handler {
+
+        public void onRequestCallClick(MaterialButton requestCall) {
+            switch (state) {
+                case NONE:
+                case DISCONNECTED:
+                    if (!expertConnect.isCallbackActive()) {
+                        ChannelRequest channelRequest = new ChannelRequest.Builder(VoiceCallbackActivity.this)
+                                .setTo(DEMO_SKILL)
+                                .setFrom(expertConnect.getUserName())
+                                .setSubject("help")
+                                .setMediaType(ChannelRequest.MEDIA_TYPE_VOICE)
+                                .setSourceType(ChannelRequest.SOURCE_TYPE_CALLBACK)
+                                .setPriority(5)
+                                .setSourceAddress(getPhoneNumber())
+                                .build();
+                        api.createChannel(channelRequest);
+                        binding.requestCall.setText(R.string.processing_callback);
+
+                        state = State.REQUESTED;
+                    }
+                    break;
+                case REQUESTED:
+                    if (!expertConnect.isCallbackActive()) {
+                        Toast.makeText(VoiceCallbackActivity.this, "Your request is in progress", Toast.LENGTH_LONG).show();
+                    }
+                    break;
+                case CONNECTED:
+                    if (expertConnect.isCallbackActive()) {
+                        api.closeReplyBackChannel(voiceChannel);
+                    }
+                    break;
+            }
+        }
     }
 }

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.graphics.ColorFilter;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
@@ -11,7 +12,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.FileProvider;
@@ -66,7 +66,7 @@ import com.humanify.expertconnect.api.model.conversationengine.SendQuestionComma
 import com.humanify.expertconnect.api.model.conversationengine.StatusMessage;
 import com.humanify.expertconnect.api.model.conversationengine.TextMessage;
 import com.humanify.expertconnect.api.model.experts.SkillDetail;
-import com.humanify.expertconnect.sample.holdr.Holdr_ActivityChat;
+import com.humanify.expertconnect.sample.databinding.ActivityChatBinding;
 import com.humanify.expertconnect.util.ApiResult;
 import com.humanify.expertconnect.util.NetworkConnectionMonitor;
 import com.humanify.expertconnect.view.compat.MaterialIconButton;
@@ -80,7 +80,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 
-public class ChatActivity extends AppCompatActivity implements Holdr_ActivityChat.Listener {
+public class ChatActivity extends AppCompatActivity {
 
     private final static String TAG = ChatActivity.class.getSimpleName();
     private final static String DEMO_SKILL = "CE_Mobile_Chat";
@@ -95,7 +95,8 @@ public class ChatActivity extends AppCompatActivity implements Holdr_ActivityCha
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private static final int REQUEST_GALLERY_IMAGE = 2;
 
-    private Holdr_ActivityChat holdr;
+    private ActivityChatBinding binding;
+
     private ExpertConnectApiProxy api;
     private ExpertConnect expertConnect;
     private Channel chatChannel;
@@ -183,10 +184,8 @@ public class ChatActivity extends AppCompatActivity implements Holdr_ActivityCha
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_chat);
-
-        holdr = new Holdr_ActivityChat(findViewById(android.R.id.content));
-        holdr.setListener(this);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_chat);
+        binding.setHandler(new Handler());
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -198,7 +197,7 @@ public class ChatActivity extends AppCompatActivity implements Holdr_ActivityCha
         expertConnect = ExpertConnect.getInstance(this);
 
         buttonEnabledTint = new PorterDuffColorFilter(getResources().getColor(R.color.expertconnect_color_blue), PorterDuff.Mode.SRC_IN);
-        holdr.chatMessage.addTextChangedListener(new TextWatcher() {
+        binding.chatMessage.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -207,11 +206,11 @@ public class ChatActivity extends AppCompatActivity implements Holdr_ActivityCha
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (TextUtils.isEmpty(s)) {
-                    holdr.send.setEnabled(false);
-                    holdr.send.setColorFilter(null);
+                    binding.send.setEnabled(false);
+                    binding.send.setColorFilter(null);
                 } else {
-                    holdr.send.setEnabled(true);
-                    holdr.send.setColorFilter(buttonEnabledTint);
+                    binding.send.setEnabled(true);
+                    binding.send.setColorFilter(buttonEnabledTint);
                 }
             }
 
@@ -245,11 +244,15 @@ public class ChatActivity extends AppCompatActivity implements Holdr_ActivityCha
 
         LinearLayoutManager manager = new LinearLayoutManager(this);
         manager.setStackFromEnd(true);
-        holdr.chatList.setLayoutManager(manager);
+        binding.chatList.setLayoutManager(manager);
 
         messageAdapter = new MessageAdapter();
-        holdr.chatList.setAdapter(messageAdapter);
+        binding.chatList.setAdapter(messageAdapter);
+    }
 
+    @Override
+    public void onStart() {
+        super.onStart();
         api.registerCreateChannel(createChannelReceiver);
         api.registerGetConversationEvent(conversationEventReceiver);
 
@@ -287,11 +290,6 @@ public class ChatActivity extends AppCompatActivity implements Holdr_ActivityCha
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-    }
-
-    @Override
     public void onStop() {
         super.onStop();
     }
@@ -306,26 +304,6 @@ public class ChatActivity extends AppCompatActivity implements Holdr_ActivityCha
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onAttachImageClick(MaterialIconToggle attachImage) {
-        selectImage();
-    }
-
-    @Override
-    public void onCancelClick(MaterialIconButton cancel) {
-    }
-
-    @Override
-    public void onSendClick(MaterialIconButton send) {
-        String message = holdr.chatMessage.getText().toString();
-        ChatMessage chatMessage = new ChatMessage.Builder(chatChannel, message)
-                .setFrom(IdentityManager.getInstance(this).getUserName())
-                .build();
-        appendMessage(chatMessage);
-        holdr.chatMessage.setText("");
-        api.sendMessage(chatMessage);
-    }
-
     private void sendChatStateMessage(String composing) {
         ChatState chatState = new ChatState.Builder(chatChannel)
                 .setFrom(IdentityManager.getInstance(this).getUserName())
@@ -336,9 +314,9 @@ public class ChatActivity extends AppCompatActivity implements Holdr_ActivityCha
     }
 
     private void setEnableEntry(boolean enable) {
-        holdr.chatMessage.setEnabled(enable);
-        holdr.send.setEnabled(enable);
-        holdr.attachImage.setEnabled(enable);
+        binding.chatMessage.setEnabled(enable);
+        binding.send.setEnabled(enable);
+        binding.attachImage.setEnabled(enable);
     }
 
     private void handleConversationEvent(ConversationEvent result) {
@@ -390,7 +368,7 @@ public class ChatActivity extends AppCompatActivity implements Holdr_ActivityCha
 
     // Added a function to check internet connection in every 20 seconds
     private void checkInternetConnection() {
-        final Handler handler = new Handler();
+        final android.os.Handler handler = new android.os.Handler();
         final int delay = 20000;
 
         handler.postDelayed(new Runnable() {
@@ -595,32 +573,23 @@ public class ChatActivity extends AppCompatActivity implements Holdr_ActivityCha
         }
     }
 
-    private void selectImage() {
-        holdr.attachImage.setChecked(true);
-        final CharSequence[] items = {"Take Photo", "Choose from Gallery", "Cancel"};
+    public class Handler {
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(ChatActivity.this);
-        builder.setCancelable(false);
-        builder.setTitle("Send Image");
-        builder.setItems(items, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int item) {
+        public void onAttachImageClick(MaterialIconToggle attachImage) {
+        }
 
-                if (items[item].equals("Take Photo")) {
-                    cameraIntent();
-                    holdr.attachImage.setChecked(false);
+        public void onCancelClick(MaterialIconButton cancel) {
+        }
 
-                } else if (items[item].equals("Choose from Gallery")) {
-                    galleryIntent();
-                    holdr.attachImage.setChecked(false);
-
-                } else if (items[item].equals("Cancel")) {
-                    dialog.dismiss();
-                    holdr.attachImage.setChecked(false);
-                }
-            }
-        });
-        builder.show();
+        public void onSendClick(MaterialIconButton send) {
+            String message = binding.chatMessage.getText().toString();
+            ChatMessage chatMessage = new ChatMessage.Builder(chatChannel, message)
+                    .setFrom(IdentityManager.getInstance(ChatActivity.this).getUserName())
+                    .build();
+            appendMessage(chatMessage);
+            binding.chatMessage.setText("");
+            api.sendMessage(chatMessage);
+        }
     }
 
     private void galleryIntent() {
