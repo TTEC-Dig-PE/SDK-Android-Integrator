@@ -1,196 +1,215 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.humanify.expertconnect.sample.SampleActivity">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?actionBarSize"
-        android:background="?colorPrimary"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <data>
 
-    <LinearLayout
+        <variable
+            name="handler"
+            type="com.humanify.expertconnect.sample.SampleActivity.Handler" />
+    </data>
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/toolbar"
-        android:orientation="vertical"
-        android:padding="8dp">
+        tools:context="com.humanify.expertconnect.sample.SampleActivity">
 
-        <TextView
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="8dp"
-            android:text="@string/high_level_sdk" />
+            android:layout_height="?actionBarSize"
+            android:background="?colorPrimary"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingLeft="2dp"
-            android:paddingRight="2dp"
-            android:paddingTop="2dp">
-
-
-            <com.humanify.expertconnect.view.compat.MaterialButton
-                android:id="@+id/startChat"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/start_chat"
-                app:holdr_onClick="true" />
-
-            <com.humanify.expertconnect.view.compat.MaterialButton
-                android:id="@+id/startVoiceCallback"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/start_voice_callback"
-                app:holdr_onClick="true" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingLeft="2dp"
-            android:paddingRight="2dp">
-
-            <com.humanify.expertconnect.view.compat.MaterialButton
-                android:id="@+id/startAnswerEngine"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/start_answer_engine"
-                app:holdr_onClick="true" />
-
-            <com.humanify.expertconnect.view.compat.MaterialButton
-                android:id="@+id/startForm"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/start_form"
-                app:holdr_onClick="true" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingLeft="2dp"
-            android:paddingRight="2dp">
-
-            <com.humanify.expertconnect.view.compat.MaterialButton
-                android:id="@+id/makeDecision"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/make_decision"
-                app:holdr_onClick="true" />
-
-            <com.humanify.expertconnect.view.compat.MaterialButton
-                android:id="@+id/sendBreadcrumb"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/send_breadcrumb"
-                app:holdr_onClick="true" />
-        </LinearLayout>
-
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="8dp"
-            android:text="@string/low_level_sdk" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingLeft="2dp"
-            android:paddingRight="2dp">
-
-
-            <com.humanify.expertconnect.view.compat.MaterialButton
-                android:id="@+id/chat"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/start_chat"
-                app:holdr_onClick="true" />
-
-
-            <com.humanify.expertconnect.view.compat.MaterialButton
-                android:id="@+id/voiceCallback"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/start_voice_callback"
-                app:holdr_onClick="true" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingLeft="2dp"
-            android:paddingRight="2dp"
-            android:paddingTop="2dp">
-
-            <com.humanify.expertconnect.view.compat.MaterialButton
-                android:id="@+id/answerEngine"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/start_answer_engine"
-                app:holdr_onClick="true" />
-
-            <View
-                android:id="@+id/empty"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1" />
-
-        </LinearLayout>
-
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent"
+            android:layout_below="@+id/toolbar"
+            android:orientation="vertical"
+            android:padding="8dp">
 
             <TextView
-                android:id="@+id/message"
                 android:layout_width="match_parent"
-                android:layout_height="fill_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
-                android:layout_marginTop="8dp" />
-        </ScrollView>
+                android:layout_marginTop="8dp"
+                android:text="@string/high_level_sdk" />
 
-    </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp"
+                android:paddingTop="2dp">
 
-    <FrameLayout
-        android:id="@+id/container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
 
-    <com.humanify.expertconnect.view.compat.TintProgressBar
-        android:id="@+id/loading"
-        style="@style/AppStyle.LargeProgressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_gravity="center"
-        android:visibility="gone" />
-</RelativeLayout>
+                <com.humanify.expertconnect.view.compat.MaterialButton
+                    android:id="@+id/startChat"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/start_chat"
+                    android:onClick="@{()-> handler.onStartChatClick(startChat)}"
+                    />
+
+                <com.humanify.expertconnect.view.compat.MaterialButton
+                    android:id="@+id/startVoiceCallback"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/start_voice_callback"
+                    android:onClick="@{()-> handler.onStartVoiceCallbackClick(startVoiceCallback)}"
+                    />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp">
+
+                <com.humanify.expertconnect.view.compat.MaterialButton
+                    android:id="@+id/startAnswerEngine"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/start_answer_engine"
+                    android:onClick="@{()-> handler.onStartAnswerEngineClick(startAnswerEngine)}"
+                    />
+
+                <com.humanify.expertconnect.view.compat.MaterialButton
+                    android:id="@+id/startForm"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/start_form"
+                    android:onClick="@{()-> handler.onStartFormClick(startForm)}"
+                    />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp">
+
+                <com.humanify.expertconnect.view.compat.MaterialButton
+                    android:id="@+id/makeDecision"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/make_decision"
+                    android:onClick="@{()-> handler.onMakeDecisionClick(makeDecision)}"
+                    />
+
+                <com.humanify.expertconnect.view.compat.MaterialButton
+                    android:id="@+id/sendBreadcrumb"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/send_breadcrumb"
+                    android:onClick="@{()-> handler.onSendBreadcrumbClick(sendBreadcrumb)}"
+                    />
+            </LinearLayout>
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="8dp"
+                android:text="@string/low_level_sdk" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp">
+
+
+                <com.humanify.expertconnect.view.compat.MaterialButton
+                    android:id="@+id/chat"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/start_chat"
+                    android:onClick="@{()-> handler.onChatClick(chat)}"
+                    />
+
+
+                <com.humanify.expertconnect.view.compat.MaterialButton
+                    android:id="@+id/voiceCallback"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/start_voice_callback"
+                    android:onClick="@{()-> handler.onVoiceCallbackClick(voiceCallback)}"
+                    />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp"
+                android:paddingTop="2dp">
+
+                <com.humanify.expertconnect.view.compat.MaterialButton
+                    android:id="@+id/answerEngine"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/start_answer_engine"
+                    android:onClick="@{()-> handler.onAnswerEngineClick(answerEngine)}"
+                    />
+
+                <View
+                    android:id="@+id/empty"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+
+            </LinearLayout>
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/message"
+                    android:layout_width="match_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginTop="8dp" />
+            </ScrollView>
+
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <com.humanify.expertconnect.view.compat.TintProgressBar
+            android:id="@+id/loading"
+            style="@style/AppStyle.LargeProgressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center"
+            android:visibility="gone" />
+    </RelativeLayout>
+</layout>
