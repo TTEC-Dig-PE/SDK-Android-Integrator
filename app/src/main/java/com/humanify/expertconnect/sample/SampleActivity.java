@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -55,6 +57,7 @@ public class SampleActivity extends AppCompatActivity implements ExpertConnectCo
     private static final int MAX_NO_ANSWER_COUNT = 2;
 
     boolean highLevelChatActive = false;
+    Button chatst1;
 
     /*private ApiBroadcastReceiver<ParcelableMap> decisionReceiver = new ApiBroadcastReceiver<ParcelableMap>(){
 
@@ -155,8 +158,9 @@ public class SampleActivity extends AppCompatActivity implements ExpertConnectCo
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_sample);
-        binding.setHandler(new Handler());
+        //binding = DataBindingUtil.setContentView(this, R.layout.activity_sample);
+       // binding.setHandler(new Handler());
+        setContentView(R.layout.sample2);
 
         api = ExpertConnectApiProxy.getInstance(this);
         expertConnect = ExpertConnect.getInstance(this);
@@ -169,16 +173,17 @@ public class SampleActivity extends AppCompatActivity implements ExpertConnectCo
 
         expertConnect.setUserId(USER_ID);
         expertConnect.setUserName(USER_NAME);
+        chatst1 = findViewById(R.id.startchat1);
 
-        setSupportActionBar(binding.toolbar);
+        /*setSupportActionBar(binding.toolbar);
         getSupportActionBar().setTitle(getString(R.string.humanify));
-
+*/
         api.registerForSDKNotifications(notificationReceiver);
 
         registerConversation();
 
         /* Callback function to override the actions of end chat button. */
-        expertConnect.setChatEndButtonListener(new ExpertConnect.ChatEndButtonListener() {
+       /* expertConnect.setChatEndButtonListener(new ExpertConnect.ChatEndButtonListener() {
             @Override
             public boolean onEndButtonPressed(final com.humanify.expertconnect.activity.ChatActivity chatActivity) {
                 if (chatActivity != null) {
@@ -222,7 +227,7 @@ public class SampleActivity extends AppCompatActivity implements ExpertConnectCo
             }
         });
 
-        /* Callback function to override the actions of back button. */
+        *//* Callback function to override the actions of back button. *//*
         expertConnect.setChatBackButtonListener(new ExpertConnect.ChatBackButtonListener() {
             @Override
             public boolean onBackButtonPressed(final com.humanify.expertconnect.activity.ChatActivity chatActivity, boolean fromNavigationUp) {
@@ -246,6 +251,14 @@ public class SampleActivity extends AppCompatActivity implements ExpertConnectCo
                 }
                 return false;
             }
+        });*/
+
+        chatst1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //  highLevelChatActive = true;
+                api.startChat(DEMO_SKILL, null);
+            }
         });
     }
 
@@ -259,12 +272,12 @@ public class SampleActivity extends AppCompatActivity implements ExpertConnectCo
     @Override
     protected void onResume() {
         super.onResume();
-        if(highLevelChatActive && expertConnect.isChatActive()) {
+       /* if(highLevelChatActive && expertConnect.isChatActive()) {
             binding.startChat.setText(R.string.continue_chat);
         }
         if(expertConnect.isCallbackActive()) {
             binding.voiceCallback.setText(R.string.end_callback);
-        }
+        }*/
     }
 
     @Override
