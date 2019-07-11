@@ -15,7 +15,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 26
         versionCode 22
-        versionName "6.5.0"
+        versionName "6.5.2"
     }
     buildTypes {
         release {
@@ -44,7 +44,7 @@ android {
 }
 
 dependencies {
-    compile 'com.humanify.expertconnect:expertconnect:6.5.1@aar'
+    compile 'com.humanify.expertconnect:expertconnect:6.5.2@aar'
 
     compile 'com.android.support:appcompat-v7:26.1.0'
     compile 'com.android.support:recyclerview-v7:26.1.0'
