@@ -2,9 +2,8 @@ package com.humanify.expertconnect.sample;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.databinding.DataBindingUtil;
+import androidx.databinding.DataBindingUtil;
 import android.graphics.ColorFilter;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
@@ -13,14 +12,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.FileProvider;
-import android.support.v4.content.Loader;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.loader.app.LoaderManager;
+import androidx.core.content.FileProvider;
+import androidx.loader.content.Loader;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextUtils;
@@ -184,7 +183,8 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_chat);
+        binding = DataBindingUtil.setContentView(this,R.layout.activity_chat);
+        //binding = DataBindingUtil.setContentView(this, R.layout.activity_chat);
         binding.setHandler(new Handler());
 
         ActionBar actionBar = getSupportActionBar();
