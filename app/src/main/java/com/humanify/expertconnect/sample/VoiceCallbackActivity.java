@@ -204,9 +204,11 @@ public class VoiceCallbackActivity extends AppCompatActivity {
         public void onLoadFinished(Loader<ApiResult<SkillDetail>> loader, ApiResult<SkillDetail> data) {
             try {
                 SkillDetail skillDetail = data.get();
-                estimatedWaitTime = (skillDetail.getEstWait() < 0 ? skillDetail.getEstWait() : (int) Math.round(skillDetail.getEstWait() / 60.0));
-                binding.estimatedWaitTime.setText(getResources().getQuantityString(R.plurals.agents_wait_time, estimatedWaitTime, estimatedWaitTime));
-                binding.estimatedWaitTime.setText(getWaitMessage(estimatedWaitTime, skillDetail.getVoiceReady()));
+                if(skillDetail!=null) {
+                    estimatedWaitTime = (skillDetail.getEstWait() < 0 ? skillDetail.getEstWait() : (int) Math.round(skillDetail.getEstWait() / 60.0));
+                    binding.estimatedWaitTime.setText(getResources().getQuantityString(R.plurals.agents_wait_time, estimatedWaitTime, estimatedWaitTime));
+                    binding.estimatedWaitTime.setText(getWaitMessage(estimatedWaitTime, skillDetail.getVoiceReady()));
+                }
             } catch (ApiException e) {
                 Log.i(TAG, e.getUserMessage(getResources()));
             }
