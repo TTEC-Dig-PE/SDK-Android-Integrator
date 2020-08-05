@@ -504,7 +504,7 @@ public class SampleActivity extends AppCompatActivity implements ExpertConnectCo
         }
 
         public void onStartFormClick(MaterialButton startForm) {
-           // api.startInterviewForms(DEMO_FORM);
+           api.startInterviewForms(DEMO_FORM);
         }
 
         public void onVoiceCallbackClick(MaterialButton voiceCallback) {
@@ -520,8 +520,8 @@ public class SampleActivity extends AppCompatActivity implements ExpertConnectCo
         }
 
         public void onChatClick(MaterialButton chatCallback) {
-           // startActivity(new Intent(SampleActivity.this, ChatActivity.class));
-            Toast.makeText(SampleActivity.this, "Coming soon...", Toast.LENGTH_LONG).show();
+           //startActivity(new Intent(SampleActivity.this, ChatActivity.class));
+           Toast.makeText(SampleActivity.this, "Coming soon...", Toast.LENGTH_LONG).show();
         }
 
         public void onSendBreadcrumbClick(MaterialButton startForm) {
