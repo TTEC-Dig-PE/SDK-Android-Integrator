@@ -4,10 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.databinding.DataBindingUtil;
+import androidx.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -30,11 +30,10 @@ import com.humanify.expertconnect.api.model.form.FormItem;
 import com.humanify.expertconnect.sample.databinding.ActivitySampleBinding;
 import com.humanify.expertconnect.view.compat.MaterialButton;
 
-import java.util.HashMap;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 
 public class SampleActivity extends AppCompatActivity implements ExpertConnectConversationApi.FormListener {
 
@@ -350,11 +349,10 @@ public class SampleActivity extends AppCompatActivity implements ExpertConnectCo
 
         breadcrumbsSession.setJourneyId(expertConnect.getIdentityManager().getJourneyId());
         breadcrumbsSession.setTenantId(expertConnect.getOrganization());
-
         api.breadcrumbsSession(breadcrumbsSession, new Callback<BreadcrumbsSession>() {
             @Override
-            public void success(BreadcrumbsSession result, Response response) {
-                expertConnect.setBreadcrumbsSessionId(result.getSessionId());
+            public void onResponse(Call<BreadcrumbsSession> call, Response<BreadcrumbsSession> response) {
+                expertConnect.setBreadcrumbsSessionId(response.body().getSessionId());
 
                 breadcrumbsAction(context,
                         "Initialize",
@@ -364,13 +362,13 @@ public class SampleActivity extends AppCompatActivity implements ExpertConnectCo
             }
 
             @Override
-            public void failure(RetrofitError error) {
-                ApiException apiException = new ApiException(error);
+            public void onFailure(Call<BreadcrumbsSession> call, Throwable t) {
+                ApiException apiException = new ApiException(t.getMessage());
                 Toast.makeText(context, apiException.getUserMessage(getResources()), Toast.LENGTH_SHORT).show();
             }
         });
-    }
 
+    }
     private void breadcrumbsAction(final Context context,
                                    String actionType,
                                    String actionDescription,
@@ -386,21 +384,21 @@ public class SampleActivity extends AppCompatActivity implements ExpertConnectCo
         breadcrumbsAction.setActionDescription(actionDescription);
         breadcrumbsAction.setActionSource(actionSource);
         breadcrumbsAction.setActionDestination(actionDestination);
-
         api.breadcrumbSendOne(breadcrumbsAction, new Callback<BreadcrumbsAction>() {
             @Override
-            public void success(BreadcrumbsAction result, Response response) {
+            public void onResponse(Call<BreadcrumbsAction> call, Response<BreadcrumbsAction> response) {
                 Gson gson = new GsonBuilder().setPrettyPrinting().create();
-                String responseData =  "Breadcrumb Action Sent\n" + gson.toJson(result) + "\n";
+                String responseData =  "Breadcrumb Action Sent\n" + gson.toJson(response.body()) + "\n";
                 binding.message.setText(responseData);
             }
 
             @Override
-            public void failure(RetrofitError error) {
-                ApiException apiException = new ApiException(error);
+            public void onFailure(Call<BreadcrumbsAction> call, Throwable t) {
+                ApiException apiException = new ApiException(t.getMessage());
                 Toast.makeText(context, apiException.getUserMessage(getResources()), Toast.LENGTH_SHORT).show();
             }
         });
+
     }
 
     private void showAccessTokenMissingDialog() {
@@ -506,7 +504,7 @@ public class SampleActivity extends AppCompatActivity implements ExpertConnectCo
         }
 
         public void onStartFormClick(MaterialButton startForm) {
-            api.startInterviewForms(DEMO_FORM);
+           api.startInterviewForms(DEMO_FORM);
         }
 
         public void onVoiceCallbackClick(MaterialButton voiceCallback) {
@@ -522,7 +520,8 @@ public class SampleActivity extends AppCompatActivity implements ExpertConnectCo
         }
 
         public void onChatClick(MaterialButton chatCallback) {
-            startActivity(new Intent(SampleActivity.this, ChatActivity.class));
+           //startActivity(new Intent(SampleActivity.this, ChatActivity.class));
+           Toast.makeText(SampleActivity.this, "Coming soon...", Toast.LENGTH_LONG).show();
         }
 
         public void onSendBreadcrumbClick(MaterialButton startForm) {
@@ -543,17 +542,18 @@ public class SampleActivity extends AppCompatActivity implements ExpertConnectCo
 
             api.postDecisionData(decisionDict, new Callback<ParcelableMap>() {
                 @Override
-                public void success(ParcelableMap result, Response response) {
+                public void onResponse(Call<ParcelableMap> call, Response<ParcelableMap> response) {
                     Gson gson = new GsonBuilder().setPrettyPrinting().create();
-                    String responseData = gson.toJson(result);
+                    String responseData = gson.toJson(response.body());
                     binding.message.setText(responseData);
                 }
 
                 @Override
-                public void failure(RetrofitError error) {
-                    Log.d("Retrofit_decision", error.getMessage());
+                public void onFailure(Call<ParcelableMap> call, Throwable t) {
+                    Log.d("Retrofit_decision", t.getMessage());
                 }
             });
+
         }
 
     }

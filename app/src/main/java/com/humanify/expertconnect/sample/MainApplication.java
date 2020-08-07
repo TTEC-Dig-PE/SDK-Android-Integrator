@@ -9,11 +9,12 @@ import android.util.Log;
 import com.humanify.expertconnect.ExpertConnect;
 import com.humanify.expertconnect.ExpertConnectConfig;
 import com.humanify.expertconnect.ExpertConnectLog;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
 
 import java.io.IOException;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 import static com.humanify.expertconnect.ExpertConnectLog.ExpertConnectLogLevelDebug;
 import static com.humanify.expertconnect.ExpertConnectLog.ExpertConnectLogLevelError;
